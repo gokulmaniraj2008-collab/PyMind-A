@@ -10,7 +10,7 @@ import zipfile
 import gradio as gr
 
 from pymind.chat import LocalChatEngine
-from pymind.website_builder import generate_website, write_website
+from pymind.website_builder import _slug, generate_website, write_website
 
 
 ENGINE = LocalChatEngine(os.environ.get("PYMIND_CHECKPOINT", "checkpoints/tiny_gpt.pt"))
@@ -36,7 +36,7 @@ def build_site(prompt: str):
             archive = Path(tempfile.gettempdir()) / f"{site_dir.name}.zip"
             with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
                 for file in site_dir.iterdir():
-                    bundle.write(file, arcname=f"{project.name}/{file.name}")
+                    bundle.write(file, arcname=f"{_slug(project.name)}/{file.name}")
         preview = project.files["index.html"].replace(
             '<link rel="stylesheet" href="styles.css">',
             f"<style>{project.files['styles.css']}</style>",
