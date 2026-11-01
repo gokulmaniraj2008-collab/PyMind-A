@@ -37,7 +37,7 @@ jobs:
         run: python -m pytest -q
 
       - name: Compile Python modules
-        run: python -m compileall -q pymind tests
+        run: python -m compileall -q pymind tests app.py
 
       - name: Inspect Python coding assistant
         run: python -m pymind.coding pymind/model.py --fail-on-high
