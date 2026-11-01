@@ -2,7 +2,7 @@ name: PyMind-A CPU model training
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/tinygpt-web-chat]
     paths:
       - "data/pymind_training.txt"
       - ".github/workflows/train-model.yml"
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   train:
@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,6 +56,13 @@ jobs:
             --checkpoint checkpoints/tiny_gpt.pt \
             --data data/starter_ta_en.txt
 
+      - name: Package checkpoint for inference hosting
+        run: |
+          mkdir -p artifacts
+          zip -q -r artifacts/tinygpt-checkpoint.zip checkpoints/tiny_gpt.pt
+          test -s artifacts/tinygpt-checkpoint.zip
+          unzip -l artifacts/tinygpt-checkpoint.zip
+
       - name: Upload checkpoint and training metrics
         uses: actions/upload-artifact@v4
         with:
@@ -60,4 +70,19 @@ jobs:
           path: |
             checkpoints/tiny_gpt.pt
             logs/training_metrics.csv
+            artifacts/tinygpt-checkpoint.zip
           retention-days: 7
+
+      - name: Publish checkpoint archive to this branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f artifacts/tinygpt-checkpoint.zip
+          if git diff --cached --quiet; then
+            echo "Checkpoint archive is already up to date."
+          else
+            git commit -m "Publish trained TinyGPT checkpoint archive"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
