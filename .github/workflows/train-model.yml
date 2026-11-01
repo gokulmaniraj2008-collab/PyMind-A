@@ -40,11 +40,11 @@ jobs:
         run: |
           python -m pymind.train \
             --data data/pymind_training.txt \
-            --max-iters 150 \
-            --eval-interval 25 \
+            --max-iters 1500 \
+            --eval-interval 250 \
             --eval-batches 4 \
             --batch-size 8 \
-            --block-size 64 \
+            --block-size 96 \
             --n-embd 64 \
             --n-head 4 \
             --n-layer 2 \
