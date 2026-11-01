@@ -44,7 +44,7 @@ def main():
     parser.add_argument("--max-iters", type=int, default=1000)
     parser.add_argument("--eval-interval", type=int, default=100)
     parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--block-size", type=int, default=128)
+    parser.add_argument("--block-size", type=int, default=64)
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--n-embd", type=int, default=128)
     parser.add_argument("--n-head", type=int, default=4)

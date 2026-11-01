@@ -96,7 +96,7 @@ Useful options:
 | `--max-iters` | `1000` | Training steps |
 | `--eval-interval` | `100` | Loss measurement interval |
 | `--batch-size` | `32` | Sequences per batch |
-| `--block-size` | `128` | Context length in bytes |
+| `--block-size` | `64` | Context length in bytes |
 | `--learning-rate` | `0.0003` | AdamW learning rate |
 | `--seed` | `1337` | Random seed |
 
