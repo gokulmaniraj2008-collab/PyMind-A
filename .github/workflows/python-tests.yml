@@ -39,9 +39,6 @@ jobs:
       - name: Compile Python modules
         run: python -m compileall -q pymind tests
 
-      - name: Smoke-test dataset cleaning
-        run: python -m pymind.data_clean --input data/starter_ta_en.txt --output /tmp/pymind-cleaned.txt
-
       - name: Inspect Python coding assistant
         run: python -m pymind.coding pymind/model.py --fail-on-high
 

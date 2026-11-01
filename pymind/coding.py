@@ -65,7 +65,7 @@ class CodeInspector(ast.NodeVisitor):
             name = node.func.id
         elif isinstance(node.func, ast.Attribute):
             name = node.func.attr
-        if name in {"eval", "exec"}:
+        if isinstance(node.func, ast.Name) and node.func.id in {"eval", "exec"}:
             self.findings.append({
                 "severity": "high", "line": node.lineno,
                 "message": f"Use of {name} can execute dynamic code; validate the design carefully.",
