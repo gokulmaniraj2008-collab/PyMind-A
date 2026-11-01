@@ -1,0 +1,63 @@
+name: PyMind-A CPU model training
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/pymind_training.txt"
+      - ".github/workflows/train-model.yml"
+      - "pymind/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CPU PyTorch
+        run: |
+          python -m pip install --upgrade pip
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.5.1
+          pip install numpy
+
+      - name: Train small PyMind-A model
+        run: |
+          python -m pymind.train \
+            --data data/pymind_training.txt \
+            --max-iters 150 \
+            --eval-interval 25 \
+            --eval-batches 4 \
+            --batch-size 8 \
+            --block-size 64 \
+            --n-embd 64 \
+            --n-head 4 \
+            --n-layer 2 \
+            --seed 1337 \
+            --output checkpoints/tiny_gpt.pt \
+            --metrics-output logs/training_metrics.csv
+
+      - name: Evaluate trained model
+        run: |
+          python -m pymind.evaluate \
+            --checkpoint checkpoints/tiny_gpt.pt \
+            --data data/starter_ta_en.txt
+
+      - name: Upload checkpoint and training metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: pymind-a-trained-model
+          path: |
+            checkpoints/tiny_gpt.pt
+            logs/training_metrics.csv
+          retention-days: 7

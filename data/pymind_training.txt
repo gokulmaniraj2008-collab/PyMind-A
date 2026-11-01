@@ -1,0 +1,83 @@
+PyMind-A is a Python-first learning project for understanding language models. A language model predicts the next token from the tokens that came before it. Training adjusts neural network weights so that correct next tokens become more likely.
+
+Python is a general-purpose programming language. It is widely used for automation, data analysis, machine learning, scientific computing, web services, and creative tools. A Python program is made from instructions, expressions, functions, classes, and modules.
+
+PyTorch is a machine learning framework. A tensor stores numerical data. An automatic differentiation system computes gradients. An optimizer uses gradients to update model parameters. A training loop repeats forward computation, loss calculation, backpropagation, and parameter updates.
+
+A tokenizer converts text into token IDs. A character tokenizer maps each character to an integer. A byte tokenizer maps UTF-8 bytes to integers from zero to 255. Byte tokenization can represent Tamil, English, emoji, and other Unicode text, although one visible character may require several bytes.
+
+A Transformer uses attention to mix information across a sequence. Causal attention prevents a token from looking at future tokens. This makes a decoder-only Transformer suitable for next-token prediction. Positional embeddings provide information about token order.
+
+A GPT-style model contains token embeddings, position embeddings, Transformer blocks, normalization, and an output projection. Each Transformer block contains attention and a feed-forward network. Residual connections help information and gradients move through the network.
+
+Training data must be relevant to the task. Data cleaning can normalize Unicode, remove accidental duplicate lines, and preserve paragraph boundaries. Dataset provenance records where data came from and what license permits its use.
+
+A validation dataset is kept separate from training data. Training loss measures prediction error on training examples. Validation loss measures prediction error on held-out examples. A lower validation loss can indicate better generalization, but it does not prove that a model is helpful or truthful.
+
+Overfitting happens when a model learns training examples too closely and performs poorly on new examples. More parameters do not automatically create better answers. Dataset quality, diversity, training method, evaluation, and compute all matter.
+
+An epoch is one complete pass through a dataset. A step is one optimizer update. A batch contains several training sequences. Gradient accumulation combines gradients across multiple batches before an optimizer update. A learning rate controls the size of parameter updates.
+
+An attention mask controls which positions can exchange information. In a causal language model, position three can use positions one, two, and three, but cannot use position four. This rule protects autoregressive generation.
+
+Text generation starts with a prompt. The model predicts a probability distribution for the next token. Sampling chooses a token from that distribution and appends it to the context. The process repeats until a token limit is reached.
+
+Temperature changes the sharpness of a probability distribution. Top-K sampling keeps only a fixed number of likely tokens. Top-P sampling keeps a group of tokens whose cumulative probability reaches a threshold. These settings change variety, not the underlying knowledge of the model.
+
+A small model trained on a tiny corpus is an educational experiment. It may repeat phrases, produce broken words, or generate unrelated text. It should not be presented as a production assistant or as equivalent to a large commercial language model.
+
+Good evaluation uses examples that were not included in training. A benchmark should measure the intended task. For a coding assistant, tests should include valid code, syntax errors, edge cases, and safe handling of untrusted source code.
+
+Python syntax can be inspected with the ast module without executing the source. Static analysis can find imports, functions, classes, and some suspicious patterns. A heuristic scanner can produce false positives and false negatives, so it is not a complete security audit.
+
+Software tests help detect regressions. A unit test checks a small behavior. Integration tests check that components work together. Continuous integration can install dependencies, run tests, compile modules, and preserve generated artifacts.
+
+Git records project history. A commit stores a snapshot of tracked changes. A branch provides a separate line of development. A pull request supports review before merging. A reliable workflow checks the current branch and commit before making changes.
+
+Blender is a 3D creation application. Python scripts can create objects, materials, lights, cameras, and animations. A scene can be exported to formats such as glTF or GLB for use in other applications.
+
+A JSON scene specification can describe object types, dimensions, positions, and materials. A validator should reject unsupported values before Blender executes a scene-generation script. Generated 3D assets should be checked after export.
+
+An AI platform can connect specialized tools instead of expecting one tiny model to do everything. A language model can interpret a request, a Python tool can run approved code, Blender can create 3D scenes, and separate image or video models can handle media generation.
+
+An assistant should explain when it cannot complete a task. It should not invent tool results, pretend that code ran, or claim a file exists without checking. Clear error messages help users understand what needs to happen next.
+
+Privacy matters when collecting training data. Do not include passwords, private keys, personal records, or private conversations without permission. Use content that you created or that has a license allowing the intended use.
+
+தமிழ் ஒரு மொழி. கணினியில் தமிழ் எழுத்துகளை சேமிக்க Unicode பயன்படுகிறது. UTF-8 என்பது Unicode உரையை bytes ஆக மாற்றும் encoding முறையாகும். ஒரு தமிழ் எழுத்து ஒன்றுக்கு மேற்பட்ட bytes ஆக இருக்கலாம்.
+
+Python மூலம் தரவைப் படிக்கலாம், சுத்தம் செய்யலாம், பகுப்பாய்வு செய்யலாம். Machine learning model பயிற்சிக்கு தரவின் தரம் முக்கியம். தவறான அல்லது பொருத்தமற்ற தரவு இருந்தால் model தவறான pattern கற்றுக்கொள்ளலாம்.
+
+ஒரு language model அடுத்த token என்னவாக இருக்கும் என்று கணிக்கிறது. Transformer architecture attention mechanism பயன்படுத்துகிறது. Causal mask எதிர்கால token-களைப் பார்க்காமல் தடுக்கிறது.
+
+Training செய்யும்போது model முதலில் prediction செய்கிறது. பிறகு loss கணக்கிடப்படுகிறது. Backpropagation மூலம் gradient கணக்கிடப்படுகிறது. Optimizer அந்த gradient அடிப்படையில் model weights-ஐ மாற்றுகிறது.
+
+Validation data என்பது training செய்ய பயன்படுத்தாத தனி தரவு. இதன் மூலம் model புதிய உரையில் எப்படி செயல்படுகிறது என்பதை மதிப்பிடலாம். Training loss மட்டும் பார்த்து model நல்லது என்று முடிவு செய்யக்கூடாது.
+
+சிறிய dataset மூலம் பெரிய chatbot உருவாகாது. அதிக தரமான, அனுமதி உள்ள, பல்வகை தரவுகள் தேவை. Model அளவு, compute, tokenizer, training steps, evaluation ஆகியவை அனைத்தும் முக்கியம்.
+
+PyMind-A-வின் நோக்கம் AI மற்றும் language model உருவாக்கத்தை படிப்படியாக கற்றுக்கொள்வது. முதலில் சிறிய model-ஐ train செய்து, அதன் output-ஐ evaluate செய்து, பின்னர் மேம்படுத்த வேண்டும்.
+
+வணக்கம்! நான் Python கற்றுக்கொண்டு இருக்கிறேன். Python மூலம் சிறிய program எழுதலாம். Function என்பது மீண்டும் பயன்படுத்தக்கூடிய code பகுதி. Class என்பது data மற்றும் behavior-ஐ ஒன்றாக அமைக்கும் வழி.
+
+ஒரு நல்ல AI assistant பயனரின் கேள்வியை புரிந்துகொள்ள முயற்சிக்க வேண்டும். தெரியாத விஷயத்தைத் தெரியாது என்று சொல்ல வேண்டும். பதிலை தெளிவாகவும் பாதுகாப்பாகவும் வழங்க வேண்டும்.
+
+Data cleaning என்பது training-க்கு முன் உரையை ஒழுங்குபடுத்தும் செயல். Duplicate வரிகளை நீக்குவது உதவலாம். ஆனால் வேறுபட்ட context-இல் வரும் ஒரே வரியை எல்லா நேரமும் நீக்கக்கூடாது.
+
+Model checkpoint என்பது பயிற்சியின் போது சேமிக்கப்பட்ட weights மற்றும் configuration. Checkpoint மூலம் பின்னர் model-ஐ மீண்டும் load செய்து generation அல்லது evaluation செய்யலாம்.
+
+Loss என்பது model prediction மற்றும் உண்மையான அடுத்த token இடையிலான பிழையை அளக்கும் metric. Perplexity என்பது loss-இன் exponential வடிவம். இவை மொழியின் அர்த்தத்தை நேரடியாக அளவிடுவதில்லை.
+
+AI project-ஐ உருவாக்கும்போது சிறிய, சரிபார்க்கக்கூடிய கட்டங்களாகப் பிரிக்க வேண்டும். ஒவ்வொரு கட்டத்திற்கும் tests, documentation, reproducible settings, மற்றும் தெளிவான limitations இருக்க வேண்டும்.
+
+Machine learning என்பது data-இல் இருந்து pattern கற்றுக்கொள்ளும் முறை. Deep learning பல அடுக்குகள் கொண்ட neural network பயன்படுத்துகிறது. Language modeling என்பது text sequence-களின் probability-ஐ கற்றுக்கொள்ளும் ஒரு task.
+
+Natural language processing உரையை tokenization, classification, generation, translation போன்ற பணிகளுக்குப் பயன்படுத்துகிறது. ஒரே model எல்லா பணிகளிலும் சிறந்ததாக இருக்கும் என்று கருதக்கூடாது.
+
+Chat interface என்பது user message-ஐ பெற்று assistant response காட்டும் UI. Conversation history பழைய message-களை வைத்திருக்கும். Context window வரம்பு காரணமாக மிக நீண்ட history-ஐ கட்டுப்படுத்த வேண்டும்.
+
+Web search tool தற்போதைய தகவலைத் தேட உதவும். Calculator கணக்கீட்டைச் சரிபார்க்க உதவும். Code execution tool நிரலை இயக்க உதவும். Tools இணைக்கப்பட்டால் assistant பல்வேறு பணிகளைச் செய்ய முடியும்.
+
+Image generation மற்றும் video generation தனித்துவமான generative models தேவைப்படலாம். Python அவற்றை இணைக்கும் orchestration language ஆகப் பயன்படலாம்; ஆனால் Python மட்டும் இருப்பதால் அந்த models தானாக கிடைக்காது.
+
+ஒரு model-ஐ train செய்வதற்கு முன் dataset size, encoding, duplicate content, train validation split, model configuration ஆகியவற்றைச் சரிபார்க்க வேண்டும். பயிற்சி முடிந்ததும் metrics மற்றும் generated samples-ஐ ஆய்வு செய்ய வேண்டும்.

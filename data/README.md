@@ -41,3 +41,10 @@ Keep `held_out.txt` separate from training text. Compare validation/evaluation l
 ## Record dataset provenance
 
 Use `data/sources.example.csv` as a template. Replace the example row with the real source title, URL, license, permission basis, language, and collection date. Do not treat the example URL as a real training source. Only add material that you created, have permission to use, or whose license clearly permits the intended use. Keep personal or confidential information out of datasets.
+
+
+## PyMind-A starter training corpus
+
+`pymind_training.txt` is a small, original, hand-written educational corpus in English and Tamil. It covers Python, Transformers, training, evaluation, data quality, software testing, and Blender integration. It is included for a reproducible learning experiment, not as a general-purpose assistant dataset. It contains no scraped private conversations or third-party copyrighted training dump.
+
+The CPU training workflow uses a fixed seed and saves the best validation-loss checkpoint plus a CSV metrics file as a GitHub Actions artifact. The corpus is intentionally small; generated text may be repetitive or incoherent. Do not treat this checkpoint as a production chatbot.
