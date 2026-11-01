@@ -161,6 +161,19 @@ This creates simple procedural geometry from a JSON specification and exports a 
 
 Supported primitives: `cube`, `sphere`, and `cylinder`. Each object can specify `name`, `location`, `scale`, and RGBA `color`.
 
+## Prompt-to-website builder
+
+The Gradio workspace includes a Website Builder tab. Describe a business landing page, portfolio, product page, or 3D viewer; inspect generated HTML/CSS/JavaScript, preview it in an isolated sandboxed iframe, and download a ZIP. The first version uses deterministic Python templates rather than claiming the tiny GPT can autonomously author reliable websites. See [the Website Builder guide](docs/WEBSITE_BUILDER.md).
+
+Run the browser workspace:
+
+```bash
+pip install -r requirements-ui.txt
+python app.py
+```
+
+The website builder does not need a model checkpoint. The chat tab still needs a trained checkpoint. Image/video generation are not connected yet and require separate models or services.
+
 ## Tests
 
 ```bash
