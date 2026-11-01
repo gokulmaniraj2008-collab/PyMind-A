@@ -48,3 +48,8 @@ Use `data/sources.example.csv` as a template. Replace the example row with the r
 `pymind_training.txt` is a small, original, hand-written educational corpus in English and Tamil. It covers Python, Transformers, training, evaluation, data quality, software testing, and Blender integration. It is included for a reproducible learning experiment, not as a general-purpose assistant dataset. It contains no scraped private conversations or third-party copyrighted training dump.
 
 The CPU training workflow uses a fixed seed and saves the best validation-loss checkpoint plus a CSV metrics file as a GitHub Actions artifact. The corpus is intentionally small; generated text may be repetitive or incoherent. Do not treat this checkpoint as a production chatbot.
+
+
+## Expanded bilingual learning corpus
+
+`pymind_training.txt` now contains original English and Tamil question-answer examples, Python code explanations, and AI/Transformer/Blender learning notes. The material is authored for this repository and is not scraped from private conversations or copied from third-party books. It is a small educational corpus, not a production-grade or independently validated instruction dataset. Review every generated model output; the model may still hallucinate or produce broken text. The current trainer performs next-token prediction over the text file; it does not perform supervised fine-tuning on structured conversation pairs.

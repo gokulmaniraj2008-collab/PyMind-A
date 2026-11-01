@@ -1,83 +1,306 @@
-PyMind-A is a Python-first learning project for understanding language models. A language model predicts the next token from the tokens that came before it. Training adjusts neural network weights so that correct next tokens become more likely.
+PyMind-A bilingual learning corpus — original educational text
+Scope: Python programming, AI and machine learning fundamentals, language models, safe coding, software engineering, and Blender automation.
+These examples are written for a small next-token language-model experiment. They are not a validated instruction-tuning dataset and do not guarantee correct answers.
 
-Python is a general-purpose programming language. It is widely used for automation, data analysis, machine learning, scientific computing, web services, and creative tools. A Python program is made from instructions, expressions, functions, classes, and modules.
+=== ENGLISH QUESTION AND ANSWER EXAMPLES ===
 
-PyTorch is a machine learning framework. A tensor stores numerical data. An automatic differentiation system computes gradients. An optimizer uses gradients to update model parameters. A training loop repeats forward computation, loss calculation, backpropagation, and parameter updates.
+User: What is Python?
+Assistant: Python is a general-purpose programming language. It is readable and supports automation, web development, data analysis, scientific computing, and machine learning.
+User: What is a variable?
+Assistant: A variable is a name that refers to a value. Example: age = 18 stores the integer 18 under the name age.
+User: What is a function?
+Assistant: A function is a reusable block of code. Define it with def, give it parameters if needed, and return a result with return.
+User: What is a list?
+Assistant: A list is an ordered, mutable collection. Example: numbers = [2, 4, 6]. Access the first item with numbers[0].
+User: What is a dictionary?
+Assistant: A dictionary stores key-value pairs. Example: student = {'name': 'Gokul', 'year': 2}. Read a value with student['name'].
+User: What is a loop?
+Assistant: A loop repeats instructions. Use for to iterate over items and while to repeat while a condition remains true.
+User: What is an exception?
+Assistant: An exception is an error event during program execution. Handle expected errors with try and except, and avoid hiding errors silently.
+User: How do I read a text file?
+Assistant: Use Path from pathlib: text = Path('notes.txt').read_text(encoding='utf-8'). The encoding makes text handling explicit.
+User: How do I write a text file?
+Assistant: Use Path('notes.txt').write_text('Hello', encoding='utf-8'). Choose a clear output path and avoid overwriting important files unintentionally.
+User: What is a Python module?
+Assistant: A module is a Python file that contains reusable definitions. Import a module with import module_name.
+User: What is a class?
+Assistant: A class defines a type with data and behavior. An instance is an object created from that class.
+User: What is a virtual environment?
+Assistant: A virtual environment isolates project dependencies. Create one with python -m venv .venv and activate it before installing packages.
+User: What is pip?
+Assistant: pip installs Python packages from configured package indexes. Record project dependencies in a requirements file for repeatable setup.
+User: What is a unit test?
+Assistant: A unit test checks one small behavior. Tests make changes safer by detecting regressions.
+User: What is debugging?
+Assistant: Debugging is the process of finding and fixing the cause of a problem. Reproduce the issue, inspect inputs and state, isolate the cause, then test the fix.
+User: What is an API?
+Assistant: An API is an interface that lets software components communicate through defined operations and data formats.
+User: What is JSON?
+Assistant: JSON is a text format for structured data using objects, arrays, strings, numbers, booleans, and null.
+User: What is machine learning?
+Assistant: Machine learning uses data and an optimization process to fit a model that can make predictions on new inputs.
+User: What is deep learning?
+Assistant: Deep learning is a branch of machine learning that uses neural networks with multiple layers to learn representations.
+User: What is a neural network?
+Assistant: A neural network is a parameterized function built from connected computational layers. Training adjusts its parameters using gradients.
+User: What is a tensor?
+Assistant: A tensor is a multidimensional array used by machine learning frameworks to store and transform numerical data.
+User: What is PyTorch?
+Assistant: PyTorch is a machine learning framework that provides tensors, automatic differentiation, neural network modules, and optimizers.
+User: What is a gradient?
+Assistant: A gradient describes how a loss changes with respect to model parameters. Backpropagation computes gradients used by an optimizer.
+User: What is an optimizer?
+Assistant: An optimizer updates model parameters using gradients. AdamW is a commonly used adaptive optimizer with decoupled weight decay.
+User: What is a learning rate?
+Assistant: The learning rate controls the size of optimizer updates. A rate that is too high can destabilize training; one that is too low can make learning slow.
+User: What is overfitting?
+Assistant: Overfitting occurs when a model fits training examples too closely and performs poorly on unseen data. Use validation data and improve data diversity.
+User: What is a validation set?
+Assistant: A validation set is held out from parameter updates and used to estimate how well a model generalizes during development.
+User: What is a tokenizer?
+Assistant: A tokenizer maps text into token IDs that a model can process. Different tokenizers may split the same text differently.
+User: What is a byte tokenizer?
+Assistant: A UTF-8 byte tokenizer encodes text as bytes. It can represent all Unicode text, but one visible character may use several tokens.
+User: What is a Transformer?
+Assistant: A Transformer is a neural network architecture that uses attention and feed-forward layers to process sequences.
+User: What is attention?
+Assistant: Attention computes how strongly each position should use information from other positions in the sequence.
+User: What is causal attention?
+Assistant: Causal attention prevents a token from using future tokens. This supports next-token prediction without leaking future answers.
+User: What is a GPT model?
+Assistant: A GPT-style model is a decoder-only Transformer trained to predict the next token in a sequence.
+User: What is a context window?
+Assistant: A context window is the maximum amount of token context a model can process at one time. Older conversation may need to be summarized or removed when the limit is reached.
+User: What is temperature in text generation?
+Assistant: Temperature changes the sharpness of next-token probabilities. Lower values are usually more predictable; higher values tend to be more varied.
+User: What is top-k sampling?
+Assistant: Top-k sampling restricts the next-token choice to the k most likely tokens before sampling.
+User: What is top-p sampling?
+Assistant: Top-p sampling selects from the smallest group of likely tokens whose cumulative probability reaches a chosen threshold.
+User: Why can a tiny GPT produce poor answers?
+Assistant: A tiny GPT trained on a small corpus has limited examples and capacity. It may repeat text or produce incoherent output; this is expected in an educational prototype.
+User: Does more training always improve a model?
+Assistant: No. More steps can cause overfitting or waste compute. Track validation metrics and inspect generated samples.
+User: How should I prepare a dataset?
+Assistant: Use relevant, permissioned, diverse text. Normalize encoding, remove accidental duplicates, preserve useful context, document provenance, and keep private data out.
+User: Can Python alone create images and videos?
+Assistant: Python can orchestrate image and video tools, process media, and automate Blender. High-quality generation still requires suitable models or rendering software.
+User: How can Python control Blender?
+Assistant: Blender provides a Python API. A script can create objects, set materials, place lights and cameras, animate objects, and export a scene.
+User: What is a GLB file?
+Assistant: GLB is a binary form of glTF used to package 3D scene data and assets for compatible viewers.
+User: What should a coding assistant do?
+Assistant: A coding assistant should explain code, suggest changes, identify likely bugs, and run tests only in a controlled environment with clear user permission.
+User: Why should untrusted code not be executed?
+Assistant: Untrusted code can read files, access networks, or damage data. Inspect it statically or run it only in a properly isolated sandbox.
+User: What makes an AI answer trustworthy?
+Assistant: A trustworthy answer distinguishes verified facts from assumptions, admits uncertainty, avoids invented results, and gives reproducible steps.
+User: How should an assistant handle Tamil and English?
+Assistant: It should preserve the user's intended meaning, answer in the requested language, and avoid claiming fluency that its training and evaluation do not support.
+User: What is a Git commit?
+Assistant: A Git commit records a snapshot of project changes. A clear commit message explains the purpose of the change.
+User: What is continuous integration?
+Assistant: Continuous integration automatically installs dependencies and runs checks such as unit tests, compilation, and smoke tests after changes.
+User: What is a model checkpoint?
+Assistant: A checkpoint stores model parameters and configuration so training or inference can resume later.
+User: What is loss?
+Assistant: Loss is a numerical measure of prediction error for a training objective. Lower loss on held-out data can be useful, but it does not prove factual accuracy.
+User: What is perplexity?
+Assistant: Perplexity is the exponential of average token-level negative log likelihood. It measures predictive uncertainty on a dataset, not overall assistant quality.
 
-A tokenizer converts text into token IDs. A character tokenizer maps each character to an integer. A byte tokenizer maps UTF-8 bytes to integers from zero to 255. Byte tokenization can represent Tamil, English, emoji, and other Unicode text, although one visible character may require several bytes.
+=== TAMIL QUESTION AND ANSWER EXAMPLES ===
 
-A Transformer uses attention to mix information across a sequence. Causal attention prevents a token from looking at future tokens. This makes a decoder-only Transformer suitable for next-token prediction. Positional embeddings provide information about token order.
+User: Python என்றால் என்ன?
+Assistant: Python என்பது எளிதாகப் படிக்கக்கூடிய பொதுப் பயன்பாட்டு programming language. Automation, data analysis, web development, scientific computing, machine learning போன்ற பணிகளில் பயன்படுகிறது.
+User: Variable என்றால் என்ன?
+Assistant: Variable என்பது ஒரு value-ஐக் குறிக்கும் பெயர். உதாரணம்: age = 18 என்று எழுதினால் age என்ற பெயர் 18 என்ற integer value-ஐக் குறிக்கும்.
+User: Function எதற்குப் பயன்படும்?
+Assistant: Function என்பது மீண்டும் பயன்படுத்தக்கூடிய code பகுதி. Python-ல் def keyword மூலம் function உருவாக்கலாம். return மூலம் முடிவைத் திருப்பிக் கொடுக்கலாம்.
+User: List என்றால் என்ன?
+Assistant: List என்பது வரிசைப்படுத்தப்பட்டு மாற்றக்கூடிய values தொகுப்பு. உதாரணம்: numbers = [10, 20, 30]. முதல் value-ஐ numbers[0] மூலம் பெறலாம்.
+User: Dictionary என்றால் என்ன?
+Assistant: Dictionary என்பது key மற்றும் value ஜோடிகளாகத் தரவைச் சேமிக்கும் அமைப்பு. உதாரணம்: person = {'name': 'Gokul', 'age': 18}.
+User: Loop என்றால் என்ன?
+Assistant: Loop என்பது ஒரே instructions-ஐ மீண்டும் இயக்கும் முறை. Items மீது செல்ல for loop-ஐயும் condition அடிப்படையில் while loop-ஐயும் பயன்படுத்தலாம்.
+User: Machine learning என்றால் என்ன?
+Assistant: Machine learning என்பது data-வில் உள்ள patterns-ஐ model கற்றுக்கொண்டு புதிய input-களுக்கு prediction செய்யும் முறை.
+User: Neural network என்றால் என்ன?
+Assistant: Neural network என்பது பல computational layers கொண்ட parameterized model. Training போது அதன் weights gradient உதவியுடன் update செய்யப்படுகின்றன.
+User: PyTorch எதற்குப் பயன்படும்?
+Assistant: PyTorch என்பது tensors, automatic differentiation, neural network layers, optimizers ஆகியவற்றை வழங்கும் machine learning framework.
+User: Token என்றால் என்ன?
+Assistant: Token என்பது model படிக்கும் text-இன் ஒரு அலகு. அது ஒரு character, byte, word பகுதி அல்லது முழு word ஆக இருக்கலாம்.
+User: Transformer என்றால் என்ன?
+Assistant: Transformer என்பது attention mechanism பயன்படுத்தும் neural network architecture. இது sequence-இல் உள்ள தகவல்களை ஒன்றோடொன்று தொடர்புபடுத்த உதவுகிறது.
+User: Attention என்றால் என்ன?
+Assistant: Attention என்பது ஒரு position மற்ற positions-இல் உள்ள தகவலை எவ்வளவு பயன்படுத்த வேண்டும் என்பதை கணக்கிடும் முறை.
+User: GPT எப்படி text உருவாக்குகிறது?
+Assistant: GPT முதலில் அடுத்த token-க்கான probability கணக்கிடுகிறது. பிறகு ஒரு token தேர்ந்தெடுத்து context-இல் சேர்க்கிறது. இந்த செயல் மீண்டும் நடந்து text உருவாகிறது.
+User: Training loss என்றால் என்ன?
+Assistant: Training loss என்பது training examples-இல் model prediction எவ்வளவு தவறுகிறது என்பதை அளக்கும் எண்.
+User: Validation data ஏன் தேவை?
+Assistant: Validation data-ஐ model weights update செய்யப் பயன்படுத்த மாட்டோம். புதிய data-வில் model எப்படி செயல்படுகிறது என்பதை மதிப்பிட உதவுகிறது.
+User: Overfitting என்றால் என்ன?
+Assistant: Overfitting என்பது model training examples-ஐ மிக நெருக்கமாக மனப்பாடம் செய்து புதிய examples-இல் சரியாகச் செயல்படாத நிலை.
+User: Dataset ஏன் முக்கியம்?
+Assistant: Dataset-இன் தரம், பல்வகைமை, பொருத்தம் ஆகியவை model கற்றலுக்கு முக்கியம். தவறான data இருந்தால் model தவறான patterns கற்றுக்கொள்ளலாம்.
+User: சிறிய GPT ChatGPT போல பதிலளிக்குமா?
+Assistant: சிறிய GPT-க்கு குறைந்த data மற்றும் parameters மட்டுமே இருக்கும். அதனால் அது சில text patterns கற்றுக்கொள்ளலாம்; ஆனால் ChatGPT தரமான உரையாடலை உறுதி செய்ய முடியாது.
+User: Blender-ஐ Python மூலம் கட்டுப்படுத்த முடியுமா?
+Assistant: முடியும். Blender Python API மூலம் objects, materials, lights, cameras, animations உருவாக்கி scene-ஐ GLB போன்ற format-களில் export செய்யலாம்.
+User: GLB என்றால் என்ன?
+Assistant: GLB என்பது 3D scene மற்றும் அதன் assets-ஐ ஒரே binary file-ல் சேமிக்க உதவும் glTF format.
+User: AI assistant தவறு செய்தால் என்ன செய்ய வேண்டும்?
+Assistant: தவறை மறைக்காமல் சரியான limitation-ஐச் சொல்ல வேண்டும். தேவையானால் source, test result அல்லது reproducible steps மூலம் பதிலைச் சரிபார்க்க வேண்டும்.
+User: Private data-ஐ training-க்கு சேர்க்கலாமா?
+Assistant: அனுமதி இல்லாத private conversations, passwords, personal records ஆகியவற்றை dataset-ல் சேர்க்கக்கூடாது. நாமே எழுதிய அல்லது உரிமம் அனுமதிக்கும் content-ஐ மட்டும் பயன்படுத்த வேண்டும்.
+User: GitHub Actions எதற்குப் பயன்படும்?
+Assistant: GitHub Actions மூலம் code push ஆனபோது tests இயக்கலாம், model train செய்யலாம், logs மற்றும் artifacts சேமிக்கலாம்.
+User: Model checkpoint என்றால் என்ன?
+Assistant: Checkpoint என்பது model weights மற்றும் configuration சேமிக்கப்பட்ட file. பின்னர் அதைப் load செய்து generation அல்லது evaluation செய்யலாம்.
 
-A GPT-style model contains token embeddings, position embeddings, Transformer blocks, normalization, and an output projection. Each Transformer block contains attention and a feed-forward network. Residual connections help information and gradients move through the network.
+=== PYTHON CODE AND EXPLANATIONS ===
 
-Training data must be relevant to the task. Data cleaning can normalize Unicode, remove accidental duplicate lines, and preserve paragraph boundaries. Dataset provenance records where data came from and what license permits its use.
+Example: add two numbers.
+```python
+def add(a: int, b: int) -> int:
+    return a + b
 
-A validation dataset is kept separate from training data. Training loss measures prediction error on training examples. Validation loss measures prediction error on held-out examples. A lower validation loss can indicate better generalization, but it does not prove that a model is helpful or truthful.
+print(add(3, 4))  # 7
+```
+The function receives two values and returns their sum. A type hint documents the expected types but does not enforce them at runtime.
 
-Overfitting happens when a model learns training examples too closely and performs poorly on new examples. More parameters do not automatically create better answers. Dataset quality, diversity, training method, evaluation, and compute all matter.
+Example: count words in a UTF-8 text file.
+```python
+from pathlib import Path
 
-An epoch is one complete pass through a dataset. A step is one optimizer update. A batch contains several training sequences. Gradient accumulation combines gradients across multiple batches before an optimizer update. A learning rate controls the size of parameter updates.
+text = Path('notes.txt').read_text(encoding='utf-8')
+words = text.split()
+print('Word count:', len(words))
+```
+The pathlib module provides a convenient interface for file paths. Explicit UTF-8 encoding helps preserve Tamil and other Unicode text.
 
-An attention mask controls which positions can exchange information. In a causal language model, position three can use positions one, two, and three, but cannot use position four. This rule protects autoregressive generation.
+Example: handle a missing file.
+```python
+from pathlib import Path
 
-Text generation starts with a prompt. The model predicts a probability distribution for the next token. Sampling chooses a token from that distribution and appends it to the context. The process repeats until a token limit is reached.
+path = Path('notes.txt')
+try:
+    content = path.read_text(encoding='utf-8')
+except FileNotFoundError:
+    print('The file does not exist:', path)
+else:
+    print(content)
+```
+Catch the specific error that the program can handle. Do not use a broad except clause to hide unrelated bugs.
 
-Temperature changes the sharpness of a probability distribution. Top-K sampling keeps only a fixed number of likely tokens. Top-P sampling keeps a group of tokens whose cumulative probability reaches a threshold. These settings change variety, not the underlying knowledge of the model.
+Example: test a function.
+```python
+def square(value: int) -> int:
+    return value * value
 
-A small model trained on a tiny corpus is an educational experiment. It may repeat phrases, produce broken words, or generate unrelated text. It should not be presented as a production assistant or as equivalent to a large commercial language model.
 
-Good evaluation uses examples that were not included in training. A benchmark should measure the intended task. For a coding assistant, tests should include valid code, syntax errors, edge cases, and safe handling of untrusted source code.
+def test_square() -> None:
+    assert square(4) == 16
+    assert square(0) == 0
+```
+A test checks expected behavior. Tests should include normal values and edge cases.
 
-Python syntax can be inspected with the ast module without executing the source. Static analysis can find imports, functions, classes, and some suspicious patterns. A heuristic scanner can produce false positives and false negatives, so it is not a complete security audit.
+Example: parse JSON safely.
+```python
+import json
 
-Software tests help detect regressions. A unit test checks a small behavior. Integration tests check that components work together. Continuous integration can install dependencies, run tests, compile modules, and preserve generated artifacts.
+raw = '{"name": "PyMind", "version": 1}'
+data = json.loads(raw)
+print(data['name'])
+```
+The json module converts valid JSON text into Python data structures. Invalid JSON raises a decoding error.
 
-Git records project history. A commit stores a snapshot of tracked changes. A branch provides a separate line of development. A pull request supports review before merging. A reliable workflow checks the current branch and commit before making changes.
+Example: create a simple PyTorch tensor.
+```python
+import torch
 
-Blender is a 3D creation application. Python scripts can create objects, materials, lights, cameras, and animations. A scene can be exported to formats such as glTF or GLB for use in other applications.
+values = torch.tensor([1.0, 2.0, 3.0])
+print(values.mean())
+```
+A tensor stores numerical data. PyTorch operations can build a computation graph when gradient tracking is enabled.
 
-A JSON scene specification can describe object types, dimensions, positions, and materials. A validator should reject unsupported values before Blender executes a scene-generation script. Generated 3D assets should be checked after export.
+Example: a trainable linear layer.
+```python
+import torch
+from torch import nn
 
-An AI platform can connect specialized tools instead of expecting one tiny model to do everything. A language model can interpret a request, a Python tool can run approved code, Blender can create 3D scenes, and separate image or video models can handle media generation.
+layer = nn.Linear(3, 1)
+features = torch.tensor([[0.2, 0.4, 0.6]])
+prediction = layer(features)
+print(prediction.shape)
+```
+A linear layer applies a learned weight matrix and bias. Its parameters can be optimized during training.
 
-An assistant should explain when it cannot complete a task. It should not invent tool results, pretend that code ran, or claim a file exists without checking. Clear error messages help users understand what needs to happen next.
+Example: a basic training update.
+```python
+import torch
+from torch import nn
 
-Privacy matters when collecting training data. Do not include passwords, private keys, personal records, or private conversations without permission. Use content that you created or that has a license allowing the intended use.
+model = nn.Linear(1, 1)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+x = torch.tensor([[1.0], [2.0]])
+y = torch.tensor([[2.0], [4.0]])
+prediction = model(x)
+loss = nn.functional.mse_loss(prediction, y)
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()
+```
+The optimizer update follows gradient calculation. Real training also needs data splitting, evaluation, and reproducible configuration.
 
-தமிழ் ஒரு மொழி. கணினியில் தமிழ் எழுத்துகளை சேமிக்க Unicode பயன்படுகிறது. UTF-8 என்பது Unicode உரையை bytes ஆக மாற்றும் encoding முறையாகும். ஒரு தமிழ் எழுத்து ஒன்றுக்கு மேற்பட்ட bytes ஆக இருக்கலாம்.
+Example: validate a JSON scene description before use.
+```python
+ALLOWED_TYPES = {'cube', 'sphere', 'cylinder'}
 
-Python மூலம் தரவைப் படிக்கலாம், சுத்தம் செய்யலாம், பகுப்பாய்வு செய்யலாம். Machine learning model பயிற்சிக்கு தரவின் தரம் முக்கியம். தவறான அல்லது பொருத்தமற்ற தரவு இருந்தால் model தவறான pattern கற்றுக்கொள்ளலாம்.
+def validate_object(item: dict) -> None:
+    if item.get('type') not in ALLOWED_TYPES:
+        raise ValueError('Unsupported object type')
+    position = item.get('position')
+    if not isinstance(position, list) or len(position) != 3:
+        raise ValueError('Position must contain three numbers')
+    if not all(isinstance(v, (int, float)) for v in position):
+        raise ValueError('Position values must be numeric')
+```
+Validation rejects unexpected scene data before a generation tool uses it. More checks are needed for sizes, materials, and resource limits.
 
-ஒரு language model அடுத்த token என்னவாக இருக்கும் என்று கணிக்கிறது. Transformer architecture attention mechanism பயன்படுத்துகிறது. Causal mask எதிர்கால token-களைப் பார்க்காமல் தடுக்கிறது.
+Example: deterministic random numbers.
+```python
+import random
 
-Training செய்யும்போது model முதலில் prediction செய்கிறது. பிறகு loss கணக்கிடப்படுகிறது. Backpropagation மூலம் gradient கணக்கிடப்படுகிறது. Optimizer அந்த gradient அடிப்படையில் model weights-ஐ மாற்றுகிறது.
+random.seed(42)
+print(random.randint(1, 10))
+```
+A fixed seed helps reproduce random choices in a controlled experiment. It does not guarantee identical results across every device or software version.
 
-Validation data என்பது training செய்ய பயன்படுத்தாத தனி தரவு. இதன் மூலம் model புதிய உரையில் எப்படி செயல்படுகிறது என்பதை மதிப்பிடலாம். Training loss மட்டும் பார்த்து model நல்லது என்று முடிவு செய்யக்கூடாது.
+=== AI TRAINING NOTES ===
 
-சிறிய dataset மூலம் பெரிய chatbot உருவாகாது. அதிக தரமான, அனுமதி உள்ள, பல்வகை தரவுகள் தேவை. Model அளவு, compute, tokenizer, training steps, evaluation ஆகியவை அனைத்தும் முக்கியம்.
+Next-token training creates examples from adjacent token sequences. Given a context such as 'The sky is', the target may be ' blue'. The model learns to assign probability to the next token. During generation, it repeatedly predicts and selects a next token.
 
-PyMind-A-வின் நோக்கம் AI மற்றும் language model உருவாக்கத்தை படிப்படியாக கற்றுக்கொள்வது. முதலில் சிறிய model-ஐ train செய்து, அதன் output-ஐ evaluate செய்து, பின்னர் மேம்படுத்த வேண்டும்.
+A decoder-only Transformer uses masked self-attention. The mask makes sure that each position can only use the current and earlier positions. This avoids using future target tokens during training.
 
-வணக்கம்! நான் Python கற்றுக்கொண்டு இருக்கிறேன். Python மூலம் சிறிய program எழுதலாம். Function என்பது மீண்டும் பயன்படுத்தக்கூடிய code பகுதி. Class என்பது data மற்றும் behavior-ஐ ஒன்றாக அமைக்கும் வழி.
+An embedding maps token IDs to learned vectors. Positional embeddings represent token positions. Attention combines information from the sequence. A feed-forward layer transforms each position. Residual connections add earlier representations to later computations.
 
-ஒரு நல்ல AI assistant பயனரின் கேள்வியை புரிந்துகொள்ள முயற்சிக்க வேண்டும். தெரியாத விஷயத்தைத் தெரியாது என்று சொல்ல வேண்டும். பதிலை தெளிவாகவும் பாதுகாப்பாகவும் வழங்க வேண்டும்.
+Training and validation examples must not be confused. If near-duplicate text appears in both splits, validation metrics may look better than true generalization. Dataset splitting should be designed to reduce leakage.
 
-Data cleaning என்பது training-க்கு முன் உரையை ஒழுங்குபடுத்தும் செயல். Duplicate வரிகளை நீக்குவது உதவலாம். ஆனால் வேறுபட்ட context-இல் வரும் ஒரே வரியை எல்லா நேரமும் நீக்கக்கூடாது.
+An evaluation number is evidence about a defined test, not proof of general intelligence. Inspect sample outputs, measure task-specific accuracy, test edge cases, and document limitations.
 
-Model checkpoint என்பது பயிற்சியின் போது சேமிக்கப்பட்ட weights மற்றும் configuration. Checkpoint மூலம் பின்னர் model-ஐ மீண்டும் load செய்து generation அல்லது evaluation செய்யலாம்.
+AI systems should not fabricate citations, tool outputs, file contents, or execution results. If a tool was not run, say so. If a result is uncertain, describe the uncertainty.
 
-Loss என்பது model prediction மற்றும் உண்மையான அடுத்த token இடையிலான பிழையை அளக்கும் metric. Perplexity என்பது loss-இன் exponential வடிவம். இவை மொழியின் அர்த்தத்தை நேரடியாக அளவிடுவதில்லை.
+An AI assistant can route tasks to specialized tools. A language model can interpret a request, a code tool can run tests in a sandbox, and Blender can render a 3D scene. Tool use requires permissions, input validation, and error handling.
 
-AI project-ஐ உருவாக்கும்போது சிறிய, சரிபார்க்கக்கூடிய கட்டங்களாகப் பிரிக்க வேண்டும். ஒவ்வொரு கட்டத்திற்கும் tests, documentation, reproducible settings, மற்றும் தெளிவான limitations இருக்க வேண்டும்.
+=== TAMIL LEARNING NOTES ===
 
-Machine learning என்பது data-இல் இருந்து pattern கற்றுக்கொள்ளும் முறை. Deep learning பல அடுக்குகள் கொண்ட neural network பயன்படுத்துகிறது. Language modeling என்பது text sequence-களின் probability-ஐ கற்றுக்கொள்ளும் ஒரு task.
+நல்ல dataset என்பது அதிகமான text மட்டும் அல்ல. அது பொருத்தமானதாகவும், சரியானதாகவும், அனுமதி உள்ளதாகவும் இருக்க வேண்டும். ஒரே கருத்தை பல சூழல்களில் விளக்கும் examples model-க்கு உதவலாம்.
 
-Natural language processing உரையை tokenization, classification, generation, translation போன்ற பணிகளுக்குப் பயன்படுத்துகிறது. ஒரே model எல்லா பணிகளிலும் சிறந்ததாக இருக்கும் என்று கருதக்கூடாது.
+ஒரு சிறிய model-ஐ முதலில் train செய்து loss மற்றும் generated output பார்க்க வேண்டும். Output புரியவில்லை என்றால் dataset, tokenizer, model size, training steps ஆகியவற்றை தனித்தனியாகச் சோதிக்க வேண்டும்.
 
-Chat interface என்பது user message-ஐ பெற்று assistant response காட்டும் UI. Conversation history பழைய message-களை வைத்திருக்கும். Context window வரம்பு காரணமாக மிக நீண்ட history-ஐ கட்டுப்படுத்த வேண்டும்.
+Python ஒரு programming language. PyTorch ஒரு machine learning framework. Transformer ஒரு neural network architecture. GPT என்பது autoregressive language model வகை. இவை ஒன்றுக்கொன்று தொடர்புடையவை; ஆனால் ஒரே பொருள் அல்ல.
 
-Web search tool தற்போதைய தகவலைத் தேட உதவும். Calculator கணக்கீட்டைச் சரிபார்க்க உதவும். Code execution tool நிரலை இயக்க உதவும். Tools இணைக்கப்பட்டால் assistant பல்வேறு பணிகளைச் செய்ய முடியும்.
-
-Image generation மற்றும் video generation தனித்துவமான generative models தேவைப்படலாம். Python அவற்றை இணைக்கும் orchestration language ஆகப் பயன்படலாம்; ஆனால் Python மட்டும் இருப்பதால் அந்த models தானாக கிடைக்காது.
-
-ஒரு model-ஐ train செய்வதற்கு முன் dataset size, encoding, duplicate content, train validation split, model configuration ஆகியவற்றைச் சரிபார்க்க வேண்டும். பயிற்சி முடிந்ததும் metrics மற்றும் generated samples-ஐ ஆய்வு செய்ய வேண்டும்.
+நாம் உருவாக்கும் PyMind-A திட்டம் கற்றல் மற்றும் பரிசோதனைக்கானது. சிறிய training corpus மூலம் பெரிய commercial chatbot தரத்தைப் பெற முடியாது. தரமான dataset, அதிக compute, instruction tuning, evaluation, பாதுகாப்பான tools ஆகியவை தேவை.
