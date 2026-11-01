@@ -19,3 +19,8 @@ See [TinyGPT web chat setup](../docs/TINYGPT_WEB_CHAT.md) for model-server and V
 ## Scope
 
 Training remains in GitHub Actions. The Vercel API does not install PyTorch or contain model weights. TinyGPT inference requires a running Python model server and a trained checkpoint. If the model service is not configured, the chat UI clearly reports that it is offline.
+
+
+## Chat behavior
+
+The experimental chat first checks the bilingual training corpus for an exact or closely matching beginner question. If a match is found, it returns the stored answer; otherwise it uses the local TinyGPT generator. This hybrid approach makes known starter questions more reliable while the small generative model remains experimental and is not a ChatGPT-scale assistant.
