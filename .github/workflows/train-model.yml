@@ -6,7 +6,9 @@ on:
     paths:
       - "data/pymind_training.txt"
       - ".github/workflows/train-model.yml"
-      - "pymind/**"
+      - "pymind/train.py"
+      - "pymind/model.py"
+      - "pymind/tokenizer.py"
   workflow_dispatch:
 
 permissions:
