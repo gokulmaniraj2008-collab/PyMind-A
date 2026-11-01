@@ -15,6 +15,12 @@ def main():
     parser.add_argument("--prompt", default="PyMind")
     parser.add_argument("--max-new-tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.8)
+    parser.add_argument("--top-k", type=int, default=40,
+                        help="Keep only the K most likely next tokens; use 0 to disable.")
+    parser.add_argument("--top-p", type=float, default=0.9,
+                        help="Nucleus sampling threshold in (0, 1].")
+    parser.add_argument("--repetition-penalty", type=float, default=1.1)
+    parser.add_argument("--seed", type=int, default=1337)
     args = parser.parse_args()
 
     if args.max_new_tokens < 0:
@@ -23,6 +29,18 @@ def main():
         parser.error("--temperature must be greater than zero")
     if not args.prompt:
         parser.error("--prompt cannot be empty")
+    if args.top_k < 0:
+        parser.error("--top-k cannot be negative")
+    if not 0 < args.top_p <= 1:
+        parser.error("--top-p must be in the interval (0, 1]")
+    if args.repetition_penalty < 1:
+        parser.error("--repetition-penalty must be >= 1")
+    if args.seed < 0:
+        parser.error("--seed must be non-negative")
+
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint = torch.load(
@@ -52,6 +70,9 @@ def main():
         input_ids,
         max_new_tokens=args.max_new_tokens,
         temperature=args.temperature,
+        top_k=args.top_k or None,
+        top_p=args.top_p,
+        repetition_penalty=args.repetition_penalty,
     )[0].tolist()
     print(decode(output))
 

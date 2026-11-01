@@ -33,6 +33,39 @@ def test_generation_appends_tokens():
     assert generated.shape == (1, 8)
 
 
+def test_generation_supports_sampling_controls():
+    model = small_model()
+    prompt = torch.tensor([[1, 2, 3]])
+    torch.manual_seed(7)
+    first = model.generate(prompt.clone(), max_new_tokens=6, top_k=5,
+                           top_p=0.8, repetition_penalty=1.2)
+    torch.manual_seed(7)
+    second = model.generate(prompt.clone(), max_new_tokens=6, top_k=5,
+                            top_p=0.8, repetition_penalty=1.2)
+    assert torch.equal(first, second)
+    assert first.shape == (1, 9)
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"temperature": 0},
+    {"top_k": 0},
+    {"top_p": 0},
+    {"top_p": 1.1},
+    {"repetition_penalty": 0.9},
+    {"max_new_tokens": -1},
+])
+def test_generation_rejects_invalid_sampling_parameters(kwargs):
+    with pytest.raises(ValueError):
+        small_model().generate(torch.tensor([[1, 2]]), **kwargs)
+
+
+def test_generation_restores_training_mode():
+    model = small_model()
+    model.train()
+    model.generate(torch.tensor([[1, 2]]), max_new_tokens=1)
+    assert model.training
+
+
 def test_causal_mask_blocks_future_positions():
     model = small_model()
     mask = model.blocks[0].attention.causal_mask[0, 0]

@@ -127,18 +127,69 @@ class TinyGPT(nn.Module):
         return logits, loss
 
     @torch.no_grad()
-    def generate(self, input_ids, max_new_tokens=100, temperature=1.0):
+    def generate(
+        self,
+        input_ids,
+        max_new_tokens=100,
+        temperature=1.0,
+        top_k=None,
+        top_p=1.0,
+        repetition_penalty=1.0,
+    ):
+        """Sample tokens with temperature, top-k/top-p and repetition controls."""
         if temperature <= 0:
             raise ValueError("temperature must be greater than zero")
+        if max_new_tokens < 0:
+            raise ValueError("max_new_tokens cannot be negative")
+        if top_k is not None and top_k < 1:
+            raise ValueError("top_k must be at least 1")
+        if not 0 < top_p <= 1:
+            raise ValueError("top_p must be in the interval (0, 1]")
+        if repetition_penalty < 1:
+            raise ValueError("repetition_penalty must be >= 1")
+
         was_training = self.training
         self.eval()
-        for _ in range(max_new_tokens):
-            context = input_ids[:, -self.config.block_size:]
-            logits, _ = self(context)
-            next_logits = logits[:, -1, :] / temperature
-            probabilities = F.softmax(next_logits, dim=-1)
-            next_token = torch.multinomial(probabilities, num_samples=1)
-            input_ids = torch.cat((input_ids, next_token), dim=1)
-        if was_training:
-            self.train()
+        try:
+            for _ in range(max_new_tokens):
+                context = input_ids[:, -self.config.block_size:]
+                logits, _ = self(context)
+                next_logits = logits[:, -1, :].clone()
+
+                if repetition_penalty > 1:
+                    for row in range(input_ids.size(0)):
+                        seen = input_ids[row].unique()
+                        seen_logits = next_logits[row, seen]
+                        next_logits[row, seen] = torch.where(
+                            seen_logits < 0,
+                            seen_logits * repetition_penalty,
+                            seen_logits / repetition_penalty,
+                        )
+
+                next_logits = next_logits / temperature
+
+                if top_k is not None:
+                    k = min(top_k, next_logits.size(-1))
+                    threshold = torch.topk(next_logits, k, dim=-1).values[:, -1, None]
+                    next_logits = next_logits.masked_fill(next_logits < threshold, float("-inf"))
+
+                if top_p < 1.0:
+                    sorted_logits, sorted_indices = torch.sort(
+                        next_logits, descending=True, dim=-1
+                    )
+                    sorted_probs = F.softmax(sorted_logits, dim=-1)
+                    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+                    remove = cumulative_probs > top_p
+                    remove[:, 1:] = remove[:, :-1].clone()
+                    remove[:, 0] = False
+                    sorted_logits = sorted_logits.masked_fill(remove, float("-inf"))
+                    filtered = torch.full_like(next_logits, float("-inf"))
+                    next_logits = filtered.scatter(1, sorted_indices, sorted_logits)
+
+                probabilities = F.softmax(next_logits, dim=-1)
+                next_token = torch.multinomial(probabilities, num_samples=1)
+                input_ids = torch.cat((input_ids, next_token), dim=1)
+        finally:
+            if was_training:
+                self.train()
         return input_ids

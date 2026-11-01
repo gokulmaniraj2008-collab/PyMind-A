@@ -12,6 +12,7 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 - Train/validation loss history in CSV format
 - Reproducible initialization seed
 - CPU-first training and generation
+- Top-K and Top-P sampling, temperature, repetition penalty, and generation seed
 - Checkpoint save/load, including legacy Phase 1 character-tokenizer checkpoints
 - JSON-driven Blender scene creation and GLB export script (requires Blender installed)
 - Unit tests and GitHub Actions CI
@@ -24,15 +25,13 @@ PyMind-A/
 ├── examples/blender_scene.json
 ├── output/                         # generated GLB files; do not commit large outputs
 ├── checkpoints/                    # generated weights; git-ignored
-├── logs/                           # generated CSV; git-ignored
+├── logs/                            # generated CSV; git-ignored
 ├── pymind/
 │   ├── model.py
 │   ├── tokenizer.py
 │   ├── train.py
 │   ├── generate.py
 │   └── integrations/blender/
-│       ├── scene_spec.py
-│       └── create_scene.py
 ├── tests/
 ├── requirements.txt
 └── README.md
@@ -67,6 +66,26 @@ python -m pymind.train --data data/input.txt --max-iters 1000
 python -m pymind.generate --checkpoint checkpoints/tiny_gpt.pt --prompt "வணக்கம்"
 ```
 
+Generation controls:
+
+```bash
+python -m pymind.generate \
+  --checkpoint checkpoints/tiny_gpt.pt \
+  --prompt "வணக்கம்" \
+  --max-new-tokens 120 \
+  --temperature 0.8 \
+  --top-k 40 \
+  --top-p 0.9 \
+  --repetition-penalty 1.1 \
+  --seed 1337
+```
+
+- **Temperature:** lower values make sampling more conservative; higher values increase randomness.
+- **Top-K:** limits each next-token choice to the K most likely tokens. Use `--top-k 0` to disable it.
+- **Top-P:** nucleus sampling keeps the smallest high-probability set whose cumulative probability reaches P.
+- **Repetition penalty:** discourages reuse of tokens already present in the sequence.
+- **Seed:** makes sampling reproducible on the same software/device setup.
+
 For a small CPU experiment:
 
 ```bash
@@ -98,8 +117,8 @@ python -m compileall -q pymind tests
 
 A single small GPT cannot realistically overtake ChatGPT in one coding attempt. Frontier models require large datasets, extensive training compute, research, evaluations, and safety work. PyMind-A can still become a useful personal, modular AI platform.
 
-1. Stabilize the language model and CI.
-2. Improve evaluation, sampling, data handling, and model quality.
+1. Stabilize and evaluate the language model on larger datasets.
+2. Improve tokenizer and text generation quality.
 3. Connect the model to safe Python tools and code workflows.
 4. Build Blender scene generation and validate GLB exports.
 5. Add optional image/video model integrations only when a suitable local or hosted engine is available.
