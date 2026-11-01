@@ -7,6 +7,8 @@ import os
 import urllib.request
 import zipfile
 
+import torch
+
 from pymind.chat import LocalChatEngine
 
 
@@ -44,10 +46,11 @@ def make_handler(engine, auth_token=""):
         def do_GET(self):
             if self.path != "/health":
                 return self._send({"error": "Not found."}, 404)
+            loaded = engine.model is not None and Path(engine.checkpoint_path).is_file()
             self._send({
-                "status": "ok" if Path(engine.checkpoint_path).is_file() else "checkpoint_missing",
+                "status": "ok" if loaded else "loading",
                 "model": "PyMind-A TinyGPT",
-            })
+            }, 200 if loaded else 503)
 
         def do_POST(self):
             if self.path != "/chat":
@@ -96,10 +99,23 @@ def ensure_checkpoint(checkpoint):
 
 
 def main():
+    # Keep PyTorch's CPU thread pools small on free/single-vCPU hosting.
+    torch.set_num_threads(1)
+    try:
+        torch.set_num_interop_threads(1)
+    except RuntimeError:
+        pass
+
     checkpoint = os.environ.get("PYMIND_CHECKPOINT", "checkpoints/tiny_gpt.pt")
     token = os.environ.get("PYMIND_INFERENCE_TOKEN", "")
     ensure_checkpoint(checkpoint)
+
     engine = LocalChatEngine(checkpoint)
+    # Load the model before opening the port. This prevents the first chat
+    # request from timing out while torch loads the checkpoint into memory.
+    engine.load()
+    print("PyMind-A TinyGPT checkpoint loaded and ready.")
+
     port = int(os.environ.get("PORT", "8000"))
     server = ThreadingHTTPServer(("0.0.0.0", port), make_handler(engine, token))
     print("PyMind-A TinyGPT inference server listening on port %d" % port)
