@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="PyMind-A Python-first AI workspace preview.">
+  <title>PyMind-A · AI Workspace</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">🧠 PyMind<span>-A</span></a>
+    <div class="top-actions"><span class="status-dot"></span><span id="system-status">Connecting…</span></div>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">PYTHON-FIRST AI WORKSPACE</p>
+      <h1>Build ideas.<br><span>Make them real.</span></h1>
+      <p class="lead">A lightweight Android-friendly preview for the PyMind-A project.</p>
+      <div class="hero-pills"><span>Python API</span><span>Website Builder</span><span>Tamil + English ready</span></div>
+    </section>
+    <section class="workspace">
+      <nav class="tabs" aria-label="Workspace sections">
+        <button class="tab active" data-panel="builder">Website Builder</button>
+        <button class="tab" data-panel="about">Project status</button>
+      </nav>
+      <section id="builder" class="panel active">
+        <div class="panel-heading"><div><p class="eyebrow">PROMPT TO WEBSITE</p><h2>What should we create?</h2></div><span class="step">01 / CREATE</span></div>
+        <label for="prompt">Describe your website</label>
+        <textarea id="prompt" maxlength="1200" rows="4" placeholder="Example: Create a modern portfolio for a Python developer."></textarea>
+        <div class="builder-actions"><span id="prompt-count">0 / 1200</span><button id="generate" class="primary">Generate preview ↗</button></div>
+        <p id="builder-message" class="message" role="status">Your prompt is processed by a small Python serverless function.</p>
+        <div class="preview-heading"><h3>Live preview</h3><button id="download" class="secondary" disabled>Download ZIP ↓</button></div>
+        <div class="preview-frame"><iframe id="preview" title="Generated website preview" sandbox="allow-scripts" srcdoc="<div style='font-family:system-ui;padding:28px;color:#64748b'>Your generated website will appear here.</div>"></iframe></div>
+        <details class="source"><summary>View generated HTML source</summary><pre><code id="source-code">No website generated yet.</code></pre></details>
+      </section>
+      <section id="about" class="panel">
+        <p class="eyebrow">CURRENT BUILD</p><h2>Small steps, real working parts.</h2>
+        <div class="status-list">
+          <article><span class="check">✓</span><div><strong>TinyGPT training pipeline</strong><p>Runs separately through GitHub Actions. Model weights are not bundled into this web preview.</p></div></article>
+          <article><span class="check">✓</span><div><strong>Python website generator API</strong><p>Generates safe starter HTML, CSS and JavaScript using Python's standard library.</p></div></article>
+          <article><span class="pending">…</span><div><strong>Local TinyGPT chat</strong><p>Available in the existing Gradio app; not connected to this Vercel preview yet.</p></div></article>
+          <article><span class="pending">…</span><div><strong>Image, video and advanced 3D AI</strong><p>Future integrations requiring dedicated model runtimes or services.</p></div></article>
+        </div>
+        <a class="repo-link" href="https://github.com/gokulmaniraj2008-collab/PyMind-A" target="_blank" rel="noreferrer">Open GitHub repository ↗</a>
+      </section>
+    </section>
+    <footer>PyMind-A · Open-source learning project · Built with Python</footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
