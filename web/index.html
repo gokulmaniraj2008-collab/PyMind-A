@@ -23,6 +23,7 @@
     <section class="workspace">
       <nav class="tabs" aria-label="Workspace sections">
         <button class="tab active" data-panel="builder">Website Builder</button>
+        <button class="tab" data-panel="chat">TinyGPT Chat</button>
         <button class="tab" data-panel="about">Project status</button>
       </nav>
       <section id="builder" class="panel active">
@@ -35,12 +36,21 @@
         <div class="preview-frame"><iframe id="preview" title="Generated website preview" sandbox="allow-scripts" srcdoc="<div style='font-family:system-ui;padding:28px;color:#64748b'>Your generated website will appear here.</div>"></iframe></div>
         <details class="source"><summary>View generated HTML source</summary><pre><code id="source-code">No website generated yet.</code></pre></details>
       </section>
+      <section id="chat" class="panel">
+        <div class="panel-heading"><div><p class="eyebrow">EXPERIMENTAL MODEL CHAT</p><h2>Talk to PyMind</h2></div><span class="step">02 / CHAT</span></div>
+        <p class="chat-note">Uses your trained TinyGPT checkpoint through a separate Python model server. This small experimental model may make mistakes.</p>
+        <div id="chat-log" class="chat-log" aria-live="polite"><div class="chat-empty">Ask a question to begin. Tamil and English text are supported by the byte tokenizer.</div></div>
+        <label for="chat-input">Your message</label>
+        <textarea id="chat-input" maxlength="1200" rows="3" placeholder="Ask PyMind something…"></textarea>
+        <div class="chat-actions"><span id="chat-status" role="status">Model connection will be checked when you send a message.</span><button id="chat-send" class="primary">Send ↗</button></div>
+        <button id="chat-clear" class="secondary chat-clear" type="button">Clear conversation</button>
+      </section>
       <section id="about" class="panel">
         <p class="eyebrow">CURRENT BUILD</p><h2>Small steps, real working parts.</h2>
         <div class="status-list">
           <article><span class="check">✓</span><div><strong>TinyGPT training pipeline</strong><p>Runs separately through GitHub Actions. Model weights are not bundled into this web preview.</p></div></article>
           <article><span class="check">✓</span><div><strong>Python website generator API</strong><p>Generates safe starter HTML, CSS and JavaScript using Python's standard library.</p></div></article>
-          <article><span class="pending">…</span><div><strong>Local TinyGPT chat</strong><p>Available in the existing Gradio app; not connected to this Vercel preview yet.</p></div></article>
+          <article><span class="pending">…</span><div><strong>TinyGPT web chat</strong><p>Chat interface and secure proxy are included; a separately hosted checkpoint server and Vercel environment variables are still required.</p></div></article>
           <article><span class="pending">…</span><div><strong>Image, video and advanced 3D AI</strong><p>Future integrations requiring dedicated model runtimes or services.</p></div></article>
         </div>
         <a class="repo-link" href="https://github.com/gokulmaniraj2008-collab/PyMind-A" target="_blank" rel="noreferrer">Open GitHub repository ↗</a>

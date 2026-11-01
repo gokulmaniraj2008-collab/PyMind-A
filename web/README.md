@@ -4,29 +4,23 @@ This folder is a separate, lightweight Vercel project root. It contains a mobile
 
 ## Vercel project settings
 
-When importing `gokulmaniraj2008-collab/PyMind-A` into Vercel, set **Root Directory** to `web`. Keep the framework preset as **Other** and do not set a build command. Vercel serves `index.html`, `styles.css`, and `app.js` as static assets and deploys each file in `api/` as a Python Function.
-
-The repository's root `requirements.txt` includes CPU PyTorch for model training. The Vercel root is intentionally `web/`, so this preview does not install or bundle PyTorch. The API uses Python's standard library only.
+Set **Root Directory** to \`web\`, framework preset to **Other**, and leave the build command empty. This avoids bundling the repository-root PyTorch training dependencies.
 
 ## Routes
 
-- `/` — Android-friendly PyMind-A dashboard.
-- `/api/health` — Python API health check.
-- `/api/generate` — POST JSON `{"prompt":"Create a portfolio website"}`; returns generated HTML, CSS and JavaScript.
-- `/api/generate?format=zip` — POST the same JSON to download a ZIP.
+- \`/\` — Android-friendly dashboard with website builder and TinyGPT chat UI.
+- \`/api/health\` — Python API health check.
+- \`/api/generate\` — prompt-to-website generator.
+- \`/api/generate?format=zip\` — ZIP export.
+- \`/api/chat\` — secure proxy to a separately hosted TinyGPT inference service.
 
-The generated preview runs in a sandboxed iframe. User prompt text is HTML-escaped before insertion. Requests are limited to 1,200 prompt characters and 10 KB request bodies.
+See [TinyGPT web chat setup](../docs/TINYGPT_WEB_CHAT.md) for model-server and Vercel environment configuration.
 
-## Important scope
+## Scope
 
-This is a preview of the website builder, not the full TinyGPT chat application. Model training remains in GitHub Actions. TinyGPT checkpoint inference, image generation, video generation and production 3D model generation are not exposed by these lightweight serverless routes.
+Training remains in GitHub Actions. The Vercel API does not install PyTorch or contain model weights. TinyGPT inference requires a running Python model server and a trained checkpoint. If the model service is not configured, the chat UI clearly reports that it is offline.
 
-## Local smoke test
 
-From the repository root:
+## Chat behavior
 
-```bash
-python -m unittest tests.test_vercel_preview -v
-```
-
-For local browser preview, install Vercel CLI and run `vercel dev` from this `web/` directory.
+The experimental chat first checks the bilingual training corpus for an exact or closely matching beginner question. If a match is found, it returns the stored answer; otherwise it uses the local TinyGPT generator. This hybrid approach makes known starter questions more reliable while the small generative model remains experimental and is not a ChatGPT-scale assistant.

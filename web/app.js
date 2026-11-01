@@ -19,9 +19,9 @@ async function checkHealth(){
     const response=await fetch("/api/health");
     const data=await response.json();
     if(!response.ok)throw new Error("API unavailable");
-    label.textContent=data.status==="ok"?"Python API online":"API unavailable";
+    label.textContent=data.status==="ok"?"TinyGPT online":"TinyGPT offline";
     dot.classList.toggle("ok",data.status==="ok");
-  }catch(error){label.textContent="Preview mode";dot.classList.remove("ok");}
+  }catch(error){label.textContent="TinyGPT offline";dot.classList.remove("ok");}
 }
 generateButton.addEventListener("click",async()=>{
   const prompt=promptBox.value.trim();
@@ -54,3 +54,66 @@ downloadButton.addEventListener("click",async()=>{
   }catch(error){message.textContent=error.message;message.className="message error";}
 });
 checkHealth();
+
+// Experimental TinyGPT chat. Replies are only shown when the real model API responds.
+const chatLog=document.querySelector("#chat-log");
+const chatInput=document.querySelector("#chat-input");
+const chatSend=document.querySelector("#chat-send");
+const chatStatus=document.querySelector("#chat-status");
+const chatClear=document.querySelector("#chat-clear");
+let chatHistory=[];
+function addChatMessage(role,content){
+  const empty=chatLog.querySelector(".chat-empty");
+  if(empty)empty.remove();
+  const item=document.createElement("div");
+  item.className="chat-message "+role;
+  const label=document.createElement("strong");
+  label.textContent=role==="user"?"You":"PyMind TinyGPT";
+  const body=document.createElement("p");
+  body.textContent=content;
+  item.append(label,body);
+  chatLog.append(item);
+  chatLog.scrollTop=chatLog.scrollHeight;
+}
+async function sendChat(){
+  const message=chatInput.value.trim();
+  if(!message){chatStatus.textContent="Type a message first.";return;}
+  chatSend.disabled=true;chatSend.textContent="Thinking…";
+  chatStatus.textContent="Connecting to the TinyGPT model server…";
+  addChatMessage("user",message);
+  chatHistory.push({role:"user",content:message});
+  chatInput.value="";
+  try{
+    const response=await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message,history:chatHistory.slice(0,-1).slice(-8)})
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||"TinyGPT is unavailable.");
+    addChatMessage("assistant",data.reply);
+    chatHistory.push({role:"assistant",content:data.reply});
+    chatHistory=chatHistory.slice(-8);
+    chatStatus.textContent=(data.model||"PyMind TinyGPT")+" · experimental";
+  }catch(error){
+    chatHistory.pop();
+    chatStatus.textContent=error.message+" Configure the inference server to enable real model replies.";
+    chatStatus.classList.add("error");
+  }finally{
+    chatSend.disabled=false;chatSend.textContent="Send ↗";
+  }
+}
+chatSend.addEventListener("click",sendChat);
+chatInput.addEventListener("keydown",event=>{
+  if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendChat();}
+});
+chatClear.addEventListener("click",()=>{
+  chatHistory=[];
+  chatLog.replaceChildren();
+  const empty=document.createElement("div");
+  empty.className="chat-empty";
+  empty.textContent="Conversation cleared. Ask a new question.";
+  chatLog.append(empty);
+  chatStatus.textContent="Conversation cleared.";
+  chatStatus.classList.remove("error");
+});
