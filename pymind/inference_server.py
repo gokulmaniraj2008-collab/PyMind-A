@@ -49,7 +49,7 @@ def make_handler(engine, auth_token=""):
             loaded = engine.model is not None and Path(engine.checkpoint_path).is_file()
             self._send({
                 "status": "ok" if loaded else "loading",
-                "model": "PyMind-A TinyGPT",
+                "model": "PyMind-A TinyGPT + FAQ retrieval",
             }, 200 if loaded else 503)
 
         def do_POST(self):
