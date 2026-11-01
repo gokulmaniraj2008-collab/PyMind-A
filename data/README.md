@@ -36,3 +36,8 @@ python -m pymind.evaluate --checkpoint checkpoints/tiny_gpt.pt --data held_out.t
 ```
 
 Keep `held_out.txt` separate from training text. Compare validation/evaluation loss across experiments using the same held-out set. Perplexity values are only comparable when tokenizer and evaluation data are the same.
+
+
+## Record dataset provenance
+
+Use `data/sources.example.csv` as a template. Replace the example row with the real source title, URL, license, permission basis, language, and collection date. Do not treat the example URL as a real training source. Only add material that you created, have permission to use, or whose license clearly permits the intended use. Keep personal or confidential information out of datasets.

@@ -20,6 +20,7 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 - Top-K and Top-P sampling, temperature, repetition penalty, and generation seed
 - Checkpoint save/load, including legacy Phase 1 character-tokenizer checkpoints
 - JSON-driven Blender scene creation and GLB export script (requires Blender installed)
+- Offline Python code inspector: syntax, imports, functions/classes, and heuristic risk checks
 - Unit tests and GitHub Actions CI
 
 ## Repository layout
@@ -28,6 +29,7 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 PyMind-A/
 ├── data/input.txt
 ├── data/starter_ta_en.txt
+├── data/sources.example.csv
 ├── data/README.md
 ├── examples/blender_scene.json
 ├── output/                         # generated GLB files; do not commit large outputs
@@ -118,6 +120,18 @@ python -m pymind.train --data data/input.txt --max-iters 20 --eval-interval 10 -
 ```
 
 Training saves the checkpoint with the lowest observed validation loss to `checkpoints/tiny_gpt.pt` and writes `logs/training_metrics.csv` by default. The CSV contains `step`, `train_loss`, `val_loss`, and `best_val_loss`. Optional `--early-stopping-patience 5` stops after five evaluation rounds without improvement; `0` disables it. `--grad-accum-steps 2` accumulates gradients over two batches before each optimizer update. See [the training data guide](data/README.md) before adding a larger corpus.
+
+## Offline Python coding assistant tools
+
+PyMind-A now includes a deterministic static Python inspector. It parses source code without executing it, summarizes imports/functions/classes, checks syntax, and flags selected risky patterns such as `eval`, `exec`, `os.system`, `subprocess.run(shell=True)`, pickle loading, hard-coded secret-like assignments, bare exception handlers, and mutable defaults.
+
+```bash
+python -m pymind.coding path/to/your_script.py
+python -m pymind.coding path/to/your_script.py --format json
+python -m pymind.coding path/to/your_script.py --fail-on-high
+```
+
+This is an offline code-review helper, not yet a conversational coding model and not a complete security audit. It never runs the inspected file. The tiny GPT is not yet reliable enough to author or repair production code autonomously.
 
 ## Blender scene to GLB
 
