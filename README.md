@@ -9,6 +9,8 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 - Small decoder-only Transformer with causal self-attention
 - UTF-8 byte tokenizer (256 IDs), including Tamil, English, and emoji
 - Configurable training data and model parameters
+- Validation-based best-checkpoint saving, optional early stopping, and gradient accumulation
+- Configurable evaluation batches and AdamW weight decay
 - Train/validation loss history in CSV format
 - Reproducible initialization seed
 - CPU-first training and generation
@@ -92,7 +94,7 @@ For a small CPU experiment:
 python -m pymind.train --data data/input.txt --max-iters 20 --eval-interval 10 --batch-size 4 --block-size 32 --n-embd 32 --n-head 4 --n-layer 1
 ```
 
-Training writes `checkpoints/tiny_gpt.pt` and `logs/training_metrics.csv` by default. The CSV contains `step`, `train_loss`, and `val_loss`.
+Training saves the checkpoint with the lowest observed validation loss to `checkpoints/tiny_gpt.pt` and writes `logs/training_metrics.csv` by default. The CSV contains `step`, `train_loss`, `val_loss`, and `best_val_loss`. Optional `--early-stopping-patience 5` stops after five evaluation rounds without improvement; `0` disables it. `--grad-accum-steps 2` accumulates gradients over two batches before each optimizer update. See [the training data guide](data/README.md) before adding a larger corpus.
 
 ## Blender scene to GLB
 
