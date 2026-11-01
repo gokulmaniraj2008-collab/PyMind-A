@@ -1,0 +1,12 @@
+PyMind is a small language model learning project.
+A language model learns patterns from examples of text.
+It reads a sequence of characters and predicts the next character.
+A transformer uses attention to connect information across a context.
+Causal attention looks at the current position and earlier positions.
+Training changes model parameters to reduce prediction error.
+A tokenizer converts text into numbers that a neural network can process.
+Python makes it possible to experiment with neural networks.
+PyTorch provides tensors, automatic differentiation, and neural network layers.
+A dataset should be clean, relevant, and large enough for the task.
+A tiny model is useful for learning, testing, and understanding the basics.
+The goal of PyMind is to learn how language models work step by step.
