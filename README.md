@@ -1,36 +1,39 @@
 # PyMind-A
 
-**A Python-first playground for building and understanding language models.**
+**A Python-first open-source learning project for language models and AI tool integrations.**
 
-PyMind-A is an educational decoder-only GPT project built with Python and PyTorch. It learns next-token prediction from the UTF-8 text datasets you provide. It is a foundation for experimenting with language models—not a ChatGPT replacement or a ready-made image/video generator.
+PyMind-A is an educational decoder-only GPT project built with Python and PyTorch. It learns next-byte prediction from text datasets you provide. The long-term goal is a modular AI workspace that can connect language models to coding and creative tools. It is not currently comparable to ChatGPT and does not natively generate images or videos.
 
-## Current capabilities
+## Current working components
 
-- Decoder-only Transformer with masked multi-head self-attention
-- UTF-8 byte tokenizer (256-token vocabulary), supporting Tamil, English, emoji, and other Unicode text
-- Configurable dataset path and model/training parameters
-- Train/validation loss metrics exported to CSV
-- Reproducible initialization with a configurable random seed
-- CPU support; CUDA is selected automatically when available
-- Save and reload checkpoints; Phase 1 character-tokenizer checkpoints remain supported
-- Unit tests and GitHub Actions smoke tests
+- Small decoder-only Transformer with causal self-attention
+- UTF-8 byte tokenizer (256 IDs), including Tamil, English, and emoji
+- Configurable training data and model parameters
+- Train/validation loss history in CSV format
+- Reproducible initialization seed
+- CPU-first training and generation
+- Checkpoint save/load, including legacy Phase 1 character-tokenizer checkpoints
+- JSON-driven Blender scene creation and GLB export script (requires Blender installed)
+- Unit tests and GitHub Actions CI
 
-## Project structure
+## Repository layout
 
 ```text
 PyMind-A/
-├── data/
-│   └── input.txt
-├── logs/                  # generated CSV metrics (git-ignored)
-├── checkpoints/           # generated model weights (git-ignored)
+├── data/input.txt
+├── examples/blender_scene.json
+├── output/                         # generated GLB files; do not commit large outputs
+├── checkpoints/                    # generated weights; git-ignored
+├── logs/                           # generated CSV; git-ignored
 ├── pymind/
-│   ├── __init__.py
-│   ├── tokenizer.py
 │   ├── model.py
+│   ├── tokenizer.py
 │   ├── train.py
-│   └── generate.py
+│   ├── generate.py
+│   └── integrations/blender/
+│       ├── scene_spec.py
+│       └── create_scene.py
 ├── tests/
-├── .github/workflows/
 ├── requirements.txt
 └── README.md
 ```
@@ -55,68 +58,54 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Train with the included sample dataset:
+The default dependencies use CPU-only PyTorch, so the basic workflow does not require a CUDA GPU.
+
+## Train and generate text
 
 ```bash
 python -m pymind.train --data data/input.txt --max-iters 1000
-```
-
-Train on your own UTF-8 text file with a smaller model suitable for a CPU smoke run:
-
-```bash
-python -m pymind.train --data data/my_text.txt --max-iters 100 --block-size 32 --n-embd 32 --n-head 4 --n-layer 1 --seed 42
-```
-
-Generate text:
-
-```bash
 python -m pymind.generate --checkpoint checkpoints/tiny_gpt.pt --prompt "வணக்கம்"
 ```
 
-Run tests:
+For a small CPU experiment:
 
 ```bash
-pytest -q
+python -m pymind.train --data data/input.txt --max-iters 20 --eval-interval 10 --batch-size 4 --block-size 32 --n-embd 32 --n-head 4 --n-layer 1
 ```
 
-## Training outputs and reproducibility
+Training writes `checkpoints/tiny_gpt.pt` and `logs/training_metrics.csv` by default. The CSV contains `step`, `train_loss`, and `val_loss`.
 
-By default, training writes:
+## Blender scene to GLB
 
-- Model checkpoint: `checkpoints/tiny_gpt.pt`
-- Loss history: `logs/training_metrics.csv`
+Install Blender separately. Then run from the repository root:
 
-The CSV contains `step`, `train_loss`, and `val_loss`. Use `--metrics-output` and `--output` to change their locations. Use `--seed` to reproduce the random initialization and sampling sequence on the same software/hardware setup; exact results can still vary across hardware and library versions.
+```bash
+blender --background --python pymind/integrations/blender/create_scene.py -- --spec examples/blender_scene.json --output output/pymind_scene.glb
+```
 
-Useful options:
+This creates simple procedural geometry from a JSON specification and exports a GLB. It is a deterministic scene builder—not yet an AI text-to-3D model. The language model is not yet connected to this integration.
 
-| Option | Default | Purpose |
-|---|---:|---|
-| `--data` | `data/input.txt` | UTF-8 training dataset |
-| `--max-iters` | `1000` | Training steps |
-| `--eval-interval` | `100` | Loss measurement interval |
-| `--batch-size` | `32` | Sequences per batch |
-| `--block-size` | `64` | Context length in bytes |
-| `--learning-rate` | `0.0003` | AdamW learning rate |
-| `--seed` | `1337` | Random seed |
+Supported primitives: `cube`, `sphere`, and `cylinder`. Each object can specify `name`, `location`, `scale`, and RGBA `color`.
 
-## How it works
+## Tests
 
-1. The tokenizer converts UTF-8 text into byte IDs from 0 to 255.
-2. Token and position embeddings create input representations.
-3. Causal self-attention lets each position attend only to itself and earlier positions.
-4. Feed-forward layers transform each position.
-5. The output head predicts the next byte.
-6. Training minimizes next-byte cross-entropy loss.
+```bash
+python -m pytest -q
+python -m compileall -q pymind tests
+```
 
-Because this is a small model trained on a tiny sample, generated text is experimental and may not be meaningful. Better results require a larger, clean dataset and more compute. Do not upload private data, secrets, or copyrighted datasets unless you have the right to use them.
+## Reality check and roadmap
 
-## Roadmap
+A single small GPT cannot realistically overtake ChatGPT in one coding attempt. Frontier models require large datasets, extensive training compute, research, evaluations, and safety work. PyMind-A can still become a useful personal, modular AI platform.
 
-- Phase 1: Tiny GPT foundation
-- Phase 2: UTF-8 tokenizer, configurable data, training metrics, reproducibility
-- Phase 3: Model evaluation, improved sampling, and larger configurations
-- Later: Optional API/service layer and carefully scoped integrations
+1. Stabilize the language model and CI.
+2. Improve evaluation, sampling, data handling, and model quality.
+3. Connect the model to safe Python tools and code workflows.
+4. Build Blender scene generation and validate GLB exports.
+5. Add optional image/video model integrations only when a suitable local or hosted engine is available.
+6. Build an Android-friendly web interface.
+
+Image/video generation, advanced reasoning, and ChatGPT-level performance are not implemented today. No paid API key is required for the current CPU-only training and Blender JSON workflow; image/video engines may have their own hardware or service requirements.
 
 ## License
 

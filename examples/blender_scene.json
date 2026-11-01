@@ -1,0 +1,25 @@
+{
+  "objects": [
+    {
+      "type": "cube",
+      "name": "Main_Body",
+      "location": [0, 0, 0.5],
+      "scale": [2.0, 1.0, 1.0],
+      "color": [0.05, 0.25, 0.8, 1.0]
+    },
+    {
+      "type": "cylinder",
+      "name": "Wheel_Front_Left",
+      "location": [-0.65, -0.65, -0.1],
+      "scale": [0.35, 0.35, 0.2],
+      "color": [0.04, 0.04, 0.04, 1.0]
+    },
+    {
+      "type": "sphere",
+      "name": "Demo_Lamp",
+      "location": [0.8, -0.52, 0.7],
+      "scale": [0.18, 0.18, 0.18],
+      "color": [1.0, 0.8, 0.1, 1.0]
+    }
+  ]
+}
