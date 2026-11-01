@@ -1,6 +1,8 @@
+import pytest
 import torch
 
 from pymind.model import GPTConfig, TinyGPT
+from pymind.tokenizer import ByteTokenizer
 
 
 def small_model():
@@ -36,3 +38,15 @@ def test_causal_mask_blocks_future_positions():
     mask = model.blocks[0].attention.causal_mask[0, 0]
     assert torch.all(mask.triu(1) == 0)
     assert torch.all(mask.diagonal() == 1)
+
+
+def test_byte_tokenizer_round_trips_unicode():
+    tokenizer = ByteTokenizer()
+    text = "PyMind-A தமிழ் 🚀"
+    assert tokenizer.decode(tokenizer.encode(text)) == text
+    assert tokenizer.vocab_size == 256
+
+
+def test_byte_tokenizer_rejects_non_string():
+    with pytest.raises(TypeError):
+        ByteTokenizer().encode(123)

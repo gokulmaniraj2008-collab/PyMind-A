@@ -1,31 +1,20 @@
-"""Train the Phase 1 character-level TinyGPT model."""
+"""Train PyMind-A with reproducible settings and CSV loss metrics."""
 
 import argparse
+import csv
+import random
 from pathlib import Path
 
 import torch
 
 from pymind.model import GPTConfig, TinyGPT
-
-
-def build_vocabulary(text):
-    characters = sorted(set(text))
-    stoi = {character: index for index, character in enumerate(characters)}
-    itos = {index: character for character, index in stoi.items()}
-    return stoi, itos
-
-
-def encode(text, stoi):
-    unknown = sorted(set(text) - set(stoi))
-    if unknown:
-        raise ValueError(f"Text contains characters outside the training vocabulary: {unknown}")
-    return [stoi[character] for character in text]
+from pymind.tokenizer import ByteTokenizer
 
 
 def get_batch(data, block_size, batch_size, device):
     if len(data) <= block_size:
         raise ValueError(
-            f"Training split needs more than {block_size} characters; "
+            f"Dataset split needs more than {block_size} tokens; "
             "add more text or reduce --block-size."
         )
     starts = torch.randint(len(data) - block_size, (batch_size,))
@@ -60,15 +49,26 @@ def main():
     parser.add_argument("--n-embd", type=int, default=128)
     parser.add_argument("--n-head", type=int, default=4)
     parser.add_argument("--n-layer", type=int, default=4)
+    parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--output", default="checkpoints/tiny_gpt.pt")
+    parser.add_argument("--metrics-output", default="logs/training_metrics.csv")
     args = parser.parse_args()
 
-    if args.max_iters < 1 or args.eval_interval < 1 or args.batch_size < 1:
-        parser.error("iteration, evaluation interval and batch size must be positive")
+    if min(args.max_iters, args.eval_interval, args.batch_size) < 1:
+        parser.error("iterations, evaluation interval and batch size must be positive")
+    if args.block_size < 1 or args.learning_rate <= 0 or args.seed < 0:
+        parser.error("block size and seed must be non-negative; learning rate must be positive")
+
+    random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
 
     text = Path(args.data).read_text(encoding="utf-8")
-    stoi, itos = build_vocabulary(text)
-    token_ids = torch.tensor(encode(text, stoi), dtype=torch.long)
+    if not text:
+        parser.error("Dataset is empty; add UTF-8 text to the data file.")
+    tokenizer = ByteTokenizer()
+    token_ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
 
     split = int(0.9 * len(token_ids))
     train_data, val_data = token_ids[:split], token_ids[split:]
@@ -80,7 +80,7 @@ def main():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     config = GPTConfig(
-        vocab_size=len(stoi),
+        vocab_size=tokenizer.vocab_size,
         block_size=args.block_size,
         n_embd=args.n_embd,
         n_head=args.n_head,
@@ -89,24 +89,40 @@ def main():
     model = TinyGPT(config).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
 
-    print(f"Device: {device} | Vocabulary: {len(stoi)} | Parameters: "
-          f"{sum(p.numel() for p in model.parameters()):,}")
+    metrics_path = Path(args.metrics_output)
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    with metrics_path.open("w", newline="", encoding="utf-8") as metrics_file:
+        writer = csv.DictWriter(metrics_file, fieldnames=["step", "train_loss", "val_loss"])
+        writer.writeheader()
+        print(
+            f"Device: {device} | Tokenizer: UTF-8 bytes | "
+            f"Vocabulary: {tokenizer.vocab_size} | "
+            f"Parameters: {sum(p.numel() for p in model.parameters()):,} | Seed: {args.seed}"
+        )
 
-    model.train()
-    for step in range(args.max_iters):
-        if step % args.eval_interval == 0 or step == args.max_iters - 1:
-            losses = estimate_loss(
-                model, train_data, val_data, config, args.batch_size, device
-            )
-            print(f"step {step:5d}: train loss {losses['train']:.4f}, "
-                  f"val loss {losses['val']:.4f}")
+        model.train()
+        for step in range(args.max_iters):
+            if step % args.eval_interval == 0 or step == args.max_iters - 1:
+                losses = estimate_loss(
+                    model, train_data, val_data, config, args.batch_size, device
+                )
+                writer.writerow({
+                    "step": step,
+                    "train_loss": f"{losses['train']:.6f}",
+                    "val_loss": f"{losses['val']:.6f}",
+                })
+                metrics_file.flush()
+                print(
+                    f"step {step:5d}: train loss {losses['train']:.4f}, "
+                    f"val loss {losses['val']:.4f}"
+                )
 
-        x, y = get_batch(train_data, config.block_size, args.batch_size, device)
-        _, loss = model(x, y)
-        optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        optimizer.step()
+            x, y = get_batch(train_data, config.block_size, args.batch_size, device)
+            _, loss = model(x, y)
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -114,12 +130,13 @@ def main():
         {
             "model_state": model.cpu().state_dict(),
             "config": config.to_dict(),
-            "stoi": stoi,
-            "itos": itos,
+            "tokenizer": tokenizer.to_dict(),
+            "seed": args.seed,
         },
         output,
     )
     print(f"Saved checkpoint: {output}")
+    print(f"Saved training metrics: {metrics_path}")
 
 
 if __name__ == "__main__":
