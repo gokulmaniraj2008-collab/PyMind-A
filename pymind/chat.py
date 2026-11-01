@@ -1,5 +1,6 @@
-"""Conversation prompt utilities and local TinyGPT chat inference."""
+"""Conversation prompt utilities, FAQ retrieval and local TinyGPT inference."""
 
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import torch
@@ -8,14 +9,23 @@ from pymind.model import GPTConfig, TinyGPT
 from pymind.tokenizer import ByteTokenizer
 
 
-SYSTEM_PROMPT = (
-    "You are PyMind, a helpful assistant. Reply clearly and briefly. "
-    "Support Tamil and English. If you do not know something, say so."
-)
+_STOPWORDS = {
+    "a", "an", "and", "are", "can", "could", "do", "does", "for", "how",
+    "i", "is", "it", "me", "of", "please", "the", "to", "tell", "what",
+    "when", "where", "which", "who", "why", "with", "you", "your", "about",
+}
+
+
+def normalize_question(text: str) -> str:
+    cleaned = "".join(
+        character if character.isalnum() or character.isspace() else " "
+        for character in text.casefold()
+    )
+    return " ".join(cleaned.split())
 
 
 def build_chat_prompt(message: str, history: list | None = None, max_turns: int = 4) -> str:
-    """Build a bounded role-labelled prompt from recent conversation turns."""
+    """Build a bounded role-labelled prompt matching the training corpus format."""
     if not isinstance(message, str) or not message.strip():
         raise ValueError("message must be a non-empty string")
     if max_turns < 0:
@@ -37,13 +47,62 @@ def build_chat_prompt(message: str, history: list | None = None, max_turns: int 
 
 
 class LocalChatEngine:
-    """Load and query a local PyMind-A UTF-8 byte-tokenizer checkpoint."""
+    """Local TinyGPT with bounded FAQ retrieval for known beginner questions."""
 
-    def __init__(self, checkpoint_path: str = "checkpoints/tiny_gpt.pt"):
+    def __init__(
+        self,
+        checkpoint_path: str = "checkpoints/tiny_gpt.pt",
+        corpus_path: str = "data/pymind_training.txt",
+    ):
         self.checkpoint_path = Path(checkpoint_path)
+        self.corpus_path = Path(corpus_path)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = ByteTokenizer()
         self.model = None
+        self.faq_pairs = self._load_faq_pairs()
+
+    def _load_faq_pairs(self):
+        if not self.corpus_path.is_file():
+            return []
+        pairs = []
+        question = None
+        for line in self.corpus_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line.startswith("User:"):
+                question = line[len("User:"):].strip()
+            elif line.startswith("Assistant:") and question:
+                answer = line[len("Assistant:"):].strip()
+                if answer:
+                    pairs.append((question, answer))
+                question = None
+        return pairs
+
+    def retrieve_answer(self, message: str) -> str | None:
+        """Find an exact or strongly overlapping question in the training corpus."""
+        query = normalize_question(message)
+        if not query:
+            return None
+        for question, answer in self.faq_pairs:
+            if query == normalize_question(question):
+                return answer
+
+        query_terms = set(query.split()) - _STOPWORDS
+        if not query_terms:
+            return None
+        best_score = 0.0
+        best_answer = None
+        for question, answer in self.faq_pairs:
+            candidate = normalize_question(question)
+            candidate_terms = set(candidate.split()) - _STOPWORDS
+            if not candidate_terms:
+                continue
+            overlap = len(query_terms & candidate_terms) / len(query_terms | candidate_terms)
+            sequence = SequenceMatcher(None, query, candidate).ratio()
+            score = max(overlap, sequence)
+            if score > best_score:
+                best_score = score
+                best_answer = answer
+        return best_answer if best_score >= 0.62 else None
 
     def load(self):
         if self.model is not None:
@@ -72,6 +131,9 @@ class LocalChatEngine:
         top_k: int = 20,
         max_new_tokens: int = 80,
     ) -> str:
+        retrieved = self.retrieve_answer(message)
+        if retrieved:
+            return retrieved
         self.load()
         prompt = build_chat_prompt(message, history)
         token_ids = self.tokenizer.encode(prompt)
@@ -86,4 +148,4 @@ class LocalChatEngine:
         )[0].tolist()
         decoded = self.tokenizer.decode(output)
         answer = decoded[len(prompt):].strip()
-        return answer or "I could not generate a readable response. Try a shorter message."
+        return answer or "I am still learning. Try a short question about Python, AI, or Blender."
