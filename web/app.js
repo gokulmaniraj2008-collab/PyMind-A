@@ -19,9 +19,9 @@ async function checkHealth(){
     const response=await fetch("/api/health");
     const data=await response.json();
     if(!response.ok)throw new Error("API unavailable");
-    label.textContent=data.status==="ok"?"Python API online":"API unavailable";
+    label.textContent=data.status==="ok"?"TinyGPT online":"TinyGPT offline";
     dot.classList.toggle("ok",data.status==="ok");
-  }catch(error){label.textContent="Preview mode";dot.classList.remove("ok");}
+  }catch(error){label.textContent="TinyGPT offline";dot.classList.remove("ok");}
 }
 generateButton.addEventListener("click",async()=>{
   const prompt=promptBox.value.trim();
