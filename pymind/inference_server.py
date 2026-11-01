@@ -1,8 +1,11 @@
 """Small HTTP server that runs the real PyMind-A TinyGPT checkpoint."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import io
 import json
 import os
+import urllib.request
+import zipfile
 
 from pymind.chat import LocalChatEngine
 
@@ -72,9 +75,30 @@ def make_handler(engine, auth_token=""):
     return InferenceHandler
 
 
+def ensure_checkpoint(checkpoint):
+    target = Path(checkpoint)
+    if target.is_file():
+        return
+    artifact_url = os.environ.get("PYMIND_CHECKPOINT_URL", "").strip()
+    if not artifact_url:
+        raise FileNotFoundError("Set PYMIND_CHECKPOINT_URL or provide the trained checkpoint.")
+    request = urllib.request.Request(artifact_url, headers={"User-Agent": "PyMind-A-inference"})
+    with urllib.request.urlopen(request, timeout=90) as response:
+        archive_bytes = response.read(10 * 1024 * 1024 + 1)
+    if len(archive_bytes) > 10 * 1024 * 1024:
+        raise ValueError("Checkpoint archive exceeds the 10 MB safety limit.")
+    with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
+        member = "checkpoints/tiny_gpt.pt"
+        if member not in archive.namelist():
+            raise FileNotFoundError("Training archive does not contain checkpoints/tiny_gpt.pt.")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(archive.read(member))
+
+
 def main():
     checkpoint = os.environ.get("PYMIND_CHECKPOINT", "checkpoints/tiny_gpt.pt")
     token = os.environ.get("PYMIND_INFERENCE_TOKEN", "")
+    ensure_checkpoint(checkpoint)
     engine = LocalChatEngine(checkpoint)
     port = int(os.environ.get("PORT", "8000"))
     server = ThreadingHTTPServer(("0.0.0.0", port), make_handler(engine, token))
