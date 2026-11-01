@@ -63,7 +63,7 @@ def make_handler(engine, auth_token=""):
                     return self._send({"error": "Request size must be between 1 byte and 12 KB."}, 413)
                 payload = json.loads(self.rfile.read(length))
                 message, history = validate_payload(payload)
-                reply = engine.reply(message, history=history, max_new_tokens=120)
+                reply = engine.reply(message, history=history, temperature=0.65, top_k=20, max_new_tokens=80)
                 self._send({"reply": reply, "model": "PyMind-A TinyGPT"})
             except (ValueError, json.JSONDecodeError) as exc:
                 self._send({"error": str(exc)}, 400)

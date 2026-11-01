@@ -8,7 +8,8 @@ def test_build_chat_prompt_includes_recent_roles_and_current_message():
         {"role": "user", "content": "How are you?"},
     ]
     prompt = build_chat_prompt("Explain Python", history)
-    assert "System:" in prompt
+    assert "System:" not in prompt
+    assert prompt.startswith("User: வணக்கம்")
     assert "User: வணக்கம்" in prompt
     assert "Assistant: Hello" in prompt
     assert prompt.endswith("User: Explain Python\nAssistant:")

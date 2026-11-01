@@ -20,7 +20,7 @@ def build_chat_prompt(message: str, history: list | None = None, max_turns: int 
         raise ValueError("message must be a non-empty string")
     if max_turns < 0:
         raise ValueError("max_turns cannot be negative")
-    lines = [f"System: {SYSTEM_PROMPT}"]
+    lines = []
     valid_history = []
     for item in (history or []):
         if not isinstance(item, dict):
@@ -68,9 +68,9 @@ class LocalChatEngine:
         self,
         message: str,
         history: list | None = None,
-        temperature: float = 0.8,
-        top_k: int = 40,
-        max_new_tokens: int = 120,
+        temperature: float = 0.65,
+        top_k: int = 20,
+        max_new_tokens: int = 80,
     ) -> str:
         self.load()
         prompt = build_chat_prompt(message, history)
