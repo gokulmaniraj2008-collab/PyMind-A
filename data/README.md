@@ -21,3 +21,18 @@ python -m pymind.train --data data/input.txt --max-iters 100 --eval-interval 10 
 ```
 
 The trainer saves the checkpoint with the lowest observed validation loss, not simply the final step. The CSV log records train loss, validation loss, and best validation loss. Validation loss is a useful signal, not a guarantee of factual accuracy or human-quality text.
+
+
+## Included bilingual starter file
+
+`data/starter_ta_en.txt` contains a small set of original Tamil and English educational sentences. It exists to test Unicode handling, cleaning, evaluation, and CI. It is deliberately not described as a large corpus and will not make the tiny model fluent.
+
+## Dataset cleaning and evaluation commands
+
+```bash
+python -m pymind.data_clean --input raw.txt --output cleaned.txt
+python -m pymind.train --data cleaned.txt --max-iters 500
+python -m pymind.evaluate --checkpoint checkpoints/tiny_gpt.pt --data held_out.txt
+```
+
+Keep `held_out.txt` separate from training text. Compare validation/evaluation loss across experiments using the same held-out set. Perplexity values are only comparable when tokenizer and evaluation data are the same.

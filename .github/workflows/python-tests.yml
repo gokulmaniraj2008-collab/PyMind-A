@@ -39,6 +39,9 @@ jobs:
       - name: Compile Python modules
         run: python -m compileall -q pymind tests
 
+      - name: Smoke-test dataset cleaning
+        run: python -m pymind.data_clean --input data/starter_ta_en.txt --output /tmp/pymind-cleaned.txt
+
       - name: Smoke-test training and generation
         run: |
           python -m pymind.train \
@@ -51,6 +54,7 @@ jobs:
             --n-head 4 \
             --n-layer 1 \
             --output /tmp/pymind-smoke.pt
+          python -m pymind.evaluate --checkpoint /tmp/pymind-smoke.pt --data data/starter_ta_en.txt
           python -m pymind.generate \
             --checkpoint /tmp/pymind-smoke.pt \
             --prompt "PyMind" \

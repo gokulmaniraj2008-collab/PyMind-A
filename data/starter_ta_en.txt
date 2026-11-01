@@ -1,0 +1,27 @@
+# PyMind-A bilingual starter corpus (Tamil + English)
+# Original short educational examples for pipeline testing only; not a general-purpose dataset.
+
+வணக்கம். இது PyMind-A மொழி மாதிரி பயிற்சிக்கான சிறிய தமிழ் உரை.
+Python என்பது பலவகையான நிரல்களை எழுத உதவும் programming language.
+ஒரு மொழி மாதிரி, முன்பு பார்த்த சொற்கள் மற்றும் எழுத்துகளின் அடிப்படையில் அடுத்த token-ஐ கணிக்க முயற்சிக்கிறது.
+Transformer architecture attention முறையைப் பயன்படுத்தி context-இல் உள்ள தகவல்களை இணைக்கிறது.
+பயிற்சித் தரவு சுத்தமாகவும் பொருத்தமாகவும் இருக்க வேண்டும்.
+Training loss குறைவது மட்டும் ஒரு model நல்ல பதில் தருகிறது என்பதற்கான உறுதி அல்ல.
+தமிழ் மற்றும் ஆங்கில உரைகளை UTF-8 bytes ஆக மாற்றி PyMind-A கையாள முடியும்.
+Blender மூலம் 3D objects, materials, lighting மற்றும் animation உருவாக்கலாம்.
+ஒரு GLB கோப்பில் 3D scene மற்றும் அதன் தொடர்புடைய assets இருக்கலாம்.
+விவசாயத்தில் மண், நீர், பயிர் மற்றும் வானிலைத் தகவல்கள் முக்கியமானவை.
+விவசாயிகள் தங்கள் அனுபவங்களையும் உள்ளூர் அறிவையும் பகிரும்போது புதிய தீர்வுகள் உருவாகலாம்.
+
+Hello. This is a small bilingual starter corpus for the PyMind-A data pipeline.
+Python is a programming language used for automation, data analysis, and machine learning.
+A language model learns statistical patterns from the training examples it receives.
+A Transformer uses attention to combine information from earlier positions in a sequence.
+A tokenizer converts text into token IDs that a neural network can process.
+Validation data should be kept separate from training data to measure generalization.
+A low training loss does not guarantee accurate, useful, or safe answers.
+Clean data should remove accidental duplicates while preserving useful paragraph boundaries.
+Blender can create 3D scenes with meshes, materials, cameras, lights, and animation.
+A GLB file can package a 3D scene for use in compatible viewers.
+Agriculture decisions can depend on soil properties, water availability, crop health, and local conditions.
+A small educational model is useful for learning, but it needs much more data and compute to become capable.

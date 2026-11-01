@@ -12,6 +12,9 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 - Validation-based best-checkpoint saving, optional early stopping, and gradient accumulation
 - Configurable evaluation batches and AdamW weight decay
 - Train/validation loss history in CSV format
+- UTF-8 dataset cleaner with Unicode NFC normalization and duplicate-line removal
+- Held-out dataset evaluation with next-byte loss and perplexity
+- Small original Tamil + English starter corpus for pipeline tests (not a capable training corpus)
 - Reproducible initialization seed
 - CPU-first training and generation
 - Top-K and Top-P sampling, temperature, repetition penalty, and generation seed
@@ -24,6 +27,8 @@ PyMind-A is an educational decoder-only GPT project built with Python and PyTorc
 ```text
 PyMind-A/
 ├── data/input.txt
+├── data/starter_ta_en.txt
+├── data/README.md
 ├── examples/blender_scene.json
 ├── output/                         # generated GLB files; do not commit large outputs
 ├── checkpoints/                    # generated weights; git-ignored
@@ -60,6 +65,24 @@ pip install -r requirements.txt
 ```
 
 The default dependencies use CPU-only PyTorch, so the basic workflow does not require a CUDA GPU.
+
+## Prepare and evaluate datasets
+
+The included `data/starter_ta_en.txt` is a tiny original Tamil + English starter sample for testing the pipeline only; it is not large enough for meaningful language ability. Read [the data guide](data/README.md) before adding data.
+
+Clean a UTF-8 text file (normalizes Unicode to NFC, removes duplicate non-empty lines, and preserves paragraph breaks):
+
+```bash
+python -m pymind.data_clean --input data/starter_ta_en.txt --output data/cleaned.txt
+```
+
+After training, evaluate on a separate held-out text file:
+
+```bash
+python -m pymind.evaluate --checkpoint checkpoints/tiny_gpt.pt --data path/to/held_out.txt
+```
+
+The evaluator reports next-byte loss and perplexity. Use data from different documents/sources for evaluation where possible; never evaluate on the same text used for training.
 
 ## Train and generate text
 
