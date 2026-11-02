@@ -174,6 +174,15 @@ python app.py
 
 The website builder does not need a model checkpoint. The chat tab still needs a trained checkpoint. Image/video generation are not connected yet and require separate models or services.
 
+## Independent AI foundation
+
+The independent model track does not call hosted AI APIs or load pretrained model weights. It constructs TinyGPT from random initialization and provides a CPU-friendly training smoke test. See [the independence policy](docs/INDEPENDENT_AI_POLICY.md) and [Phase 1 notes](docs/PHASE_1_INDEPENDENT_FOUNDATION.md).
+
+Run the foundation check:
+
+    python -m pymind.independent
+    python -m pytest tests/test_independent_foundation.py -q
+
 ## Tests
 
 ```bash
